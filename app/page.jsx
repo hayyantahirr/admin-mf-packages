@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Inquiries from "@/components/Inquiries";
 import Overview from "@/components/Overview";
 import ProductManagement from "@/components/ProductManagement";
+import Blogs from "@/components/Blogs";
 import Sidebar from "@/components/Sidebar";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             {activeTab === "overview" && <Overview />}
             {activeTab === "products" && <ProductManagement />}
+            {activeTab === "blogs" && <Blogs />}
             {activeTab === "inquiries" && <Inquiries />}
           </div>
         </main>

@@ -1,10 +1,11 @@
-import { LayoutDashboard, Package, Mail, X } from "lucide-react";
+import { LayoutDashboard, Package, Mail, X, FileText } from "lucide-react";
 import Image from "next/image";
 
 export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) {
   const navItems = [
     { label: "Overview", icon: <LayoutDashboard size={20} />, id: "overview" },
     { label: "Product Management", icon: <Package size={20} />, id: "products" },
+    { label: "Blogs", icon: <FileText size={20} />, id: "blogs" },
     { label: "Inquiries", icon: <Mail size={20} />, id: "inquiries" },
   ];
 
