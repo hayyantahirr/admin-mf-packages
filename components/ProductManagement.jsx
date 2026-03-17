@@ -3,7 +3,14 @@ import { useState, useEffect } from "react";
 import AddProductModal from "./AddProductModal";
 import ProductDetailsModal from "./ProductDetailsModal";
 import { db } from "../config/firebase";
-import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 export default function ProductManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +43,24 @@ export default function ProductManagement() {
   const handleRowClick = (product) => {
     setSelectedProduct(product);
     setIsDetailsModalOpen(true);
+  };
+
+  const handleDelete = async (e, productId, productName) => {
+    e.stopPropagation(); // Prevent opening the details modal
+    
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${productName}"? This action cannot be undone.`
+    );
+
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, "products", productId));
+        // No need to manually update state as onSnapshot will handle it
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product. Please try again.");
+      }
+    }
   };
 
   return (
@@ -193,8 +218,8 @@ export default function ProductManagement() {
                           <Edit2 className="h-4 w-4" />
                         </button>
                         <button
-                          title="Delete (Coming Soon)"
-                          onClick={(e) => e.stopPropagation()}
+                          title="Delete Product"
+                          onClick={(e) => handleDelete(e, product.id, product.name)}
                           className="rounded-lg p-2 text-slate-400 transition-all hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
