@@ -24,16 +24,10 @@ export default function AddProductModal({ isOpen, onClose }) {
     sku: "", // Kept for consistency if needed, though not in the rough schema
   });
   const [mainImage, setMainImage] = useState(null);
-  const [extraImages, setExtraImages] = useState([
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [extraImages, setExtraImages] = useState([]);
   const [previews, setPreviews] = useState({
     main: null,
-    extras: [null, null, null, null, null],
+    extras: [],
   });
 
   if (!isOpen) return null;
@@ -54,20 +48,28 @@ export default function AddProductModal({ isOpen, onClose }) {
     }
   };
 
-  const handleExtraImageChange = (i, e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newExtraImages = [...extraImages];
-      newExtraImages[i] = file;
-      setExtraImages(newExtraImages);
+  const handleExtraImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const remainingSlots = 5 - extraImages.length;
+      const newFiles = files.slice(0, remainingSlots);
 
-      const newExtraPreviews = [...previews.extras];
-      newExtraPreviews[i] = URL.createObjectURL(file);
+      setExtraImages((prev) => [...prev, ...newFiles]);
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
       setPreviews((prev) => ({
         ...prev,
-        extras: newExtraPreviews,
+        extras: [...prev.extras, ...newPreviews],
       }));
     }
+  };
+
+  const removeExtraImage = (index) => {
+    URL.revokeObjectURL(previews.extras[index]);
+    setExtraImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => ({
+      ...prev,
+      extras: prev.extras.filter((_, i) => i !== index),
+    }));
   };
 
   const uploadToCloudinary = async (file) => {
@@ -134,7 +136,6 @@ export default function AddProductModal({ isOpen, onClose }) {
         category: formData.category,
         inStock: formData.inStock === "true",
         stockAmount: parseInt(formData.stockAmount) || 0,
-        sku: formData.sku,
         mainImage: mainImageUrl,
         extraImages: filteredExtraUrls,
         createdAt: serverTimestamp(),
@@ -155,11 +156,10 @@ export default function AddProductModal({ isOpen, onClose }) {
         category: "",
         inStock: "true",
         stockAmount: "",
-        sku: "",
       });
       setMainImage(null);
-      setExtraImages([null, null, null, null, null]);
-      setPreviews({ main: null, extras: [null, null, null, null, null] });
+      setExtraImages([]);
+      setPreviews({ main: null, extras: [] });
     } catch (err) {
       console.error("Error adding product:", err);
       alert("Failed to add product. Please try again.");
@@ -395,30 +395,39 @@ export default function AddProductModal({ isOpen, onClose }) {
                     Extra Images (Optional - Max 5)
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                    {extraImages.map((_, i) => (
+                    {previews.extras.map((preview, i) => (
                       <div
                         key={i}
-                        className="group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-[#fa1a00] hover:bg-red-50/30 overflow-hidden"
+                        className="group relative flex aspect-square rounded-lg border border-slate-200 bg-slate-50 overflow-hidden"
                       >
-                        {previews.extras[i] ? (
-                          <img
-                            src={previews.extras[i]}
-                            alt={`Extra ${i}`}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="text-slate-300 group-hover:text-[#fa1a00]">
-                            <ImageIcon size={20} />
-                          </div>
-                        )}
-                        <input
-                          type="file"
-                          onChange={(e) => handleExtraImageChange(i, e)}
-                          accept="image/*"
-                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        <img
+                          src={preview}
+                          alt={`Extra ${i}`}
+                          className="h-full w-full object-cover"
                         />
+                        <button
+                          type="button"
+                          onClick={() => removeExtraImage(i)}
+                          className="absolute top-1 right-1 bg-white/80 rounded-full p-1 text-red-500 hover:bg-white transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
                       </div>
                     ))}
+                    {previews.extras.length < 5 && (
+                      <label className="group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-[#fa1a00] hover:bg-red-50/30">
+                        <div className="text-slate-300 group-hover:text-[#fa1a00]">
+                          <ImageIcon size={20} />
+                        </div>
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleExtraImagesChange}
+                          accept="image/*"
+                          className="hidden"
+                        />
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
