@@ -40,6 +40,12 @@ export default function ProductManagement() {
       product.category?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const handleEdit = (e, product) => {
+    e.stopPropagation();
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
   const handleRowClick = (product) => {
     setSelectedProduct(product);
     setIsDetailsModalOpen(true);
@@ -47,9 +53,9 @@ export default function ProductManagement() {
 
   const handleDelete = async (e, productId, productName) => {
     e.stopPropagation(); // Prevent opening the details modal
-    
+
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${productName}"? This action cannot be undone.`
+      `Are you sure you want to delete "${productName}"? This action cannot be undone.`,
     );
 
     if (confirmDelete) {
@@ -76,7 +82,10 @@ export default function ProductManagement() {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setSelectedProduct(null);
+            setIsModalOpen(true);
+          }}
           className="flex items-center justify-center gap-2 rounded-lg bg-[#fa1a00] px-6 py-2.5 font-semibold text-white shadow-lg shadow-red-500/20 transition-all hover:bg-red-700 active:scale-95"
         >
           <Plus size={18} />
@@ -211,15 +220,17 @@ export default function ProductManagement() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                         <button
-                          title="Edit (Coming Soon)"
-                          onClick={(e) => e.stopPropagation()}
+                          title="Edit Product"
+                          onClick={(e) => handleEdit(e, product)}
                           className="rounded-lg p-2 text-slate-400 transition-all hover:bg-[#0b3a4c]/10 hover:text-[#0b3a4c]"
                         >
                           <Edit2 className="h-4 w-4" />
                         </button>
                         <button
                           title="Delete Product"
-                          onClick={(e) => handleDelete(e, product.id, product.name)}
+                          onClick={(e) =>
+                            handleDelete(e, product.id, product.name)
+                          }
                           className="rounded-lg p-2 text-slate-400 transition-all hover:bg-red-50 hover:text-red-600"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -259,7 +270,11 @@ export default function ProductManagement() {
 
       <AddProductModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        product={selectedProduct}
       />
 
       <ProductDetailsModal
