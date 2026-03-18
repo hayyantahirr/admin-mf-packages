@@ -288,9 +288,25 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all bg-white"
                       >
                         <option value="">Select Category</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Packaging">Packaging</option>
-                        <option value="Stationery">Stationery</option>
+                        <option value="Kraft paper standup pouch">
+                          Kraft paper standup pouch
+                        </option>
+                        <option value="Aluminum pouches">
+                          Aluminum pouches
+                        </option>
+                        <option value="Flat bottom pouches">
+                          Flat bottom pouches
+                        </option>
+                        <option value="Plastic pouches">Plastic pouches</option>
+                        <option value="Spout pouches">Spout pouches</option>
+                        <option value="Retort pouches">Retort pouches</option>
+                        <option value="Chocolate sheets">
+                          Chocolate sheets
+                        </option>
+                        <option value="Coffee pouches">Coffee pouches</option>
+                        <option value="PVC shrink capsules">
+                          PVC shrink capsules
+                        </option>
                       </select>
                     </div>
                   </div>
@@ -415,7 +431,9 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       <>
                         <div className="flex flex-col items-center space-y-2 text-slate-400 group-hover:text-[#fa1a00]">
                           <Upload size={32} />
-                          <span className="text-sm font-medium">Upload thumbnail</span>
+                          <span className="text-sm font-medium">
+                            Upload thumbnail
+                          </span>
                         </div>
                         <input
                           required={!isEditMode}
@@ -439,7 +457,11 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         key={i}
                         className="group relative flex aspect-square rounded-lg border border-slate-200 bg-slate-50 overflow-hidden"
                       >
-                        <img src={item.url} alt="" className="h-full w-full object-cover" />
+                        <img
+                          src={item.url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
                         <button
                           type="button"
                           onClick={() => removeExtraImage(i)}
@@ -484,7 +506,11 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
               className="flex items-center gap-2 rounded-lg bg-[#0b3a4c] px-8 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/10 transition-all hover:bg-[#0d465c] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading && <Loader2 className="animate-spin" size={18} />}
-              {loading ? "Saving..." : isEditMode ? "Update Product" : "Save Product"}
+              {loading
+                ? "Saving..."
+                : isEditMode
+                  ? "Update Product"
+                  : "Save Product"}
             </button>
           </div>
         </form>

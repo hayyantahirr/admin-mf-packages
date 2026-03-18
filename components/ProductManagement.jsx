@@ -19,6 +19,8 @@ export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
@@ -34,10 +36,23 @@ export default function ProductManagement() {
     return () => unsubscribe();
   }, []);
 
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
 
   const handleEdit = (e, product) => {
@@ -141,7 +156,7 @@ export default function ProductManagement() {
                     </div>
                   </td>
                 </tr>
-              ) : filteredProducts.length === 0 ? (
+              ) : paginatedProducts.length === 0 ? (
                 <tr>
                   <td
                     colSpan="6"
@@ -158,7 +173,7 @@ export default function ProductManagement() {
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product) => (
+                paginatedProducts.map((product) => (
                   <tr
                     key={product.id}
                     onClick={() => handleRowClick(product)}
@@ -249,18 +264,28 @@ export default function ProductManagement() {
           <span>
             {loading
               ? "..."
-              : `Showing ${filteredProducts.length} of ${products.length} products`}
+              : `Showing ${startIndex + 1} to ${Math.min(startIndex + itemsPerPage, filteredProducts.length)} of ${filteredProducts.length} products`}
           </span>
           <div className="flex gap-2">
             <button
-              disabled
-              className="rounded-md border border-slate-200 bg-white px-3 py-1 cursor-not-allowed text-slate-300"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className={`rounded-md border border-slate-200 bg-white px-3 py-1 transition-all ${
+                currentPage === 1
+                  ? "cursor-not-allowed text-slate-300"
+                  : "hover:border-[#fa1a00] hover:text-[#fa1a00] text-slate-600"
+              }`}
             >
               Previous
             </button>
             <button
-              disabled
-              className="rounded-md border border-slate-200 bg-white px-3 py-1 cursor-not-allowed text-slate-300"
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className={`rounded-md border border-slate-200 bg-white px-3 py-1 transition-all ${
+                currentPage === totalPages || totalPages === 0
+                  ? "cursor-not-allowed text-slate-300"
+                  : "hover:border-[#fa1a00] hover:text-[#fa1a00] text-slate-600"
+              }`}
             >
               Next
             </button>
