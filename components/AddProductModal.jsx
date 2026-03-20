@@ -24,6 +24,19 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     stockAmount: "",
     sku: "",
     genDescription: "",
+    capacitySpecs: {
+      ricePulses: "",
+      pinkSalt: "",
+      mixNimco: "",
+      mixSeeds: "",
+      moringaPowder: "",
+      mixDryFruits: "",
+      ispaghol: "",
+      dehydratedFruits: "",
+      mixSpices: "",
+      tea: "",
+      flour: "",
+    },
   });
 
   const [mainImage, setMainImage] = useState(null); // File object for new uploads
@@ -47,6 +60,19 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: product.stockAmount?.toString() || "",
         sku: product.sku || "",
         genDescription: product.genDescription || "",
+        capacitySpecs: {
+          ricePulses: product.capacitySpecs?.ricePulses || "",
+          pinkSalt: product.capacitySpecs?.pinkSalt || "",
+          mixNimco: product.capacitySpecs?.mixNimco || "",
+          mixSeeds: product.capacitySpecs?.mixSeeds || "",
+          moringaPowder: product.capacitySpecs?.moringaPowder || "",
+          mixDryFruits: product.capacitySpecs?.mixDryFruits || "",
+          ispaghol: product.capacitySpecs?.ispaghol || "",
+          dehydratedFruits: product.capacitySpecs?.dehydratedFruits || "",
+          mixSpices: product.capacitySpecs?.mixSpices || "",
+          tea: product.capacitySpecs?.tea || "",
+          flour: product.capacitySpecs?.flour || "",
+        },
       });
       setPreviews({
         main: product.mainImage || null,
@@ -77,6 +103,19 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: "",
         sku: "",
         genDescription: "",
+        capacitySpecs: {
+          ricePulses: "",
+          pinkSalt: "",
+          mixNimco: "",
+          mixSeeds: "",
+          moringaPowder: "",
+          mixDryFruits: "",
+          ispaghol: "",
+          dehydratedFruits: "",
+          mixSpices: "",
+          tea: "",
+          flour: "",
+        },
       });
       setPreviews({ main: null });
       setExtraImagesState([]);
@@ -89,7 +128,18 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleMainImageChange = (e) => {
@@ -173,6 +223,28 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     }
   };
 
+  const isFormValid = () => {
+    const hasMaterial = materialRows.some((row) => row.key.trim() !== "");
+    const hasRequiredFields =
+      formData.name.trim() !== "" &&
+      formData.size.trim() !== "" &&
+      formData.price.trim() !== "" &&
+      formData.description.trim() !== "" &&
+      formData.stockAmount.trim() !== "" &&
+      formData.category !== "";
+
+    return hasMaterial && hasRequiredFields && previews.main;
+  };
+
+  const formatCapacityValue = (val) => {
+    if (!val) return "";
+    const trimmed = val.trim();
+    if (/^\d+(\.\d+)?$/.test(trimmed)) {
+      return `${trimmed}g`;
+    }
+    return trimmed;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -228,6 +300,31 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           }
           return acc;
         }, {}),
+        capacitySpecs: Object.entries(formData.capacitySpecs).reduce(
+          (acc, [key, val]) => {
+            const formatted = formatCapacityValue(val);
+            if (formatted) {
+              // Convert camelCase key to readable label if needed, or keep as is
+              // Using readable keys as requested in Firestore mapping
+              const labels = {
+                ricePulses: "Rice & Pulses",
+                pinkSalt: "Pink Salt",
+                mixNimco: "Mix Nimco",
+                mixSeeds: "Mix Seeds",
+                moringaPowder: "Moringa Powder",
+                mixDryFruits: "Mix Dry Fruits",
+                ispaghol: "Ispaghol",
+                dehydratedFruits: "Dehydrated Fruits",
+                mixSpices: "Mix Spices",
+                tea: "Tea",
+                flour: "Flour",
+              };
+              acc[labels[key] || key] = formatted;
+            }
+            return acc;
+          },
+          {},
+        ),
       };
 
       if (isEditMode) {
@@ -440,6 +537,44 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                 </div>
               </div>
 
+              {/* Product Capacity Section */}
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+                    Product Capacity (Grams/Size)
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
+                    {[
+                      { key: "ricePulses", label: "Rice & Pulses" },
+                      { key: "pinkSalt", label: "Pink Salt" },
+                      { key: "mixNimco", label: "Mix Nimco" },
+                      { key: "mixSeeds", label: "Mix Seeds" },
+                      { key: "moringaPowder", label: "Moringa Powder" },
+                      { key: "mixDryFruits", label: "Mix Dry Fruits" },
+                      { key: "ispaghol", label: "Ispaghol" },
+                      { key: "dehydratedFruits", label: "Dehydrated Fruits" },
+                      { key: "mixSpices", label: "Mix Spices" },
+                      { key: "tea", label: "Tea" },
+                      { key: "flour", label: "Flour" },
+                    ].map((field) => (
+                      <div key={field.key} className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                          {field.label}
+                        </label>
+                        <input
+                          type="text"
+                          name={`capacitySpecs.${field.key}`}
+                          value={formData.capacitySpecs[field.key]}
+                          onChange={handleInputChange}
+                          placeholder="e.g. 50g"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Material Structure Section */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -600,8 +735,8 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
             </button>
             <button
               type="submit"
-              disabled={loading}
-              className="flex items-center gap-2 rounded-lg bg-[#0b3a4c] px-8 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/10 transition-all hover:bg-[#0d465c] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={loading || !isFormValid()}
+              className="flex items-center gap-2 rounded-lg bg-[#0b3a4c] px-8 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/10 transition-all hover:bg-[#0d465c] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
             >
               {loading && <Loader2 className="animate-spin" size={18} />}
               {loading

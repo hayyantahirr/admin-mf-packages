@@ -198,6 +198,28 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                       </div>
                     </div>
                   )}
+                {product.capacitySpecs &&
+                  Object.keys(product.capacitySpecs).length > 0 && (
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                      <h5 className="text-xs font-bold text-slate-400 uppercase mb-3">
+                        Product Capacity
+                      </h5>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(product.capacitySpecs).map(
+                          ([key, value], idx) => (
+                            <div key={idx} className="space-y-0.5">
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                {key}
+                              </p>
+                              <p className="text-sm font-semibold text-slate-700">
+                                {value}
+                              </p>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
                 {product.amountOfDescription && (
                   <div className="rounded-xl bg-slate-50 p-4 border border-slate-100">
                     <h5 className="text-xs font-bold text-slate-400 uppercase mb-2">
