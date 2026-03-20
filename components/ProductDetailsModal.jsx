@@ -5,7 +5,7 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
   if (!isOpen || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-70 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
@@ -163,6 +163,41 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                 <p className="text-slate-600 leading-relaxed">
                   {product.description || "No description provided."}
                 </p>
+                {product.genDescription && (
+                  <div className="rounded-xl bg-red-50 p-4 border border-red-100">
+                    <h5 className="text-xs font-bold text-[#fa1a00] uppercase mb-2">
+                      General Description
+                    </h5>
+                    <p className="text-sm text-slate-700">
+                      {product.genDescription}
+                    </p>
+                  </div>
+                )}
+                {product.materialStructure &&
+                  Object.keys(product.materialStructure).length > 0 && (
+                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                      <h5 className="text-xs font-bold text-slate-400 uppercase mb-3">
+                        Material Structure
+                      </h5>
+                      <div className="grid grid-cols-1 gap-2">
+                        {Object.entries(product.materialStructure).map(
+                          ([key, value], idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between border-b border-slate-100 pb-1 last:border-0 last:pb-0"
+                            >
+                              <span className="text-xs font-medium text-slate-500">
+                                {key}
+                              </span>
+                              <span className="text-sm font-bold text-slate-700">
+                                {value} Microns
+                              </span>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                  )}
                 {product.amountOfDescription && (
                   <div className="rounded-xl bg-slate-50 p-4 border border-slate-100">
                     <h5 className="text-xs font-bold text-slate-400 uppercase mb-2">

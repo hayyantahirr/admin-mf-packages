@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
+import { X, Upload, Image as ImageIcon, Loader2, Trash2, Plus } from "lucide-react";
 import { db } from "../config/firebase";
 import {
   collection,
@@ -23,6 +23,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     inStock: "true",
     stockAmount: "",
     sku: "",
+    genDescription: "",
   });
 
   const [mainImage, setMainImage] = useState(null); // File object for new uploads
@@ -30,6 +31,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
   const [previews, setPreviews] = useState({
     main: null, // URL string
   });
+  const [materialRows, setMaterialRows] = useState([{ key: "", value: "" }]);
 
   useEffect(() => {
     if (product && isOpen) {
@@ -44,6 +46,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         inStock: product.inStock ? "true" : "false",
         stockAmount: product.stockAmount?.toString() || "",
         sku: product.sku || "",
+        genDescription: product.genDescription || "",
       });
       setPreviews({
         main: product.mainImage || null,
@@ -52,6 +55,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         (product.extraImages || []).map((url) => ({ url, file: null })),
       );
       setMainImage(null);
+
+      // Convert materialStructure object to rows
+      const rows = Object.entries(product.materialStructure || {}).map(
+        ([key, value]) => ({
+          key,
+          value,
+        }),
+      );
+      setMaterialRows(rows.length > 0 ? rows : [{ key: "", value: "" }]);
     } else if (!product && isOpen) {
       setFormData({
         name: "",
@@ -64,10 +76,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         inStock: "true",
         stockAmount: "",
         sku: "",
+        genDescription: "",
       });
       setPreviews({ main: null });
       setExtraImagesState([]);
       setMainImage(null);
+      setMaterialRows([{ key: "", value: "" }]);
     }
   }, [product, isOpen]);
 
@@ -115,6 +129,25 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       URL.revokeObjectURL(itemToRemove.url);
     }
     setExtraImagesState((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Material Row Handlers
+  const handleAddMaterialRow = () => {
+    setMaterialRows((prev) => [...prev, { key: "", value: "" }]);
+  };
+
+  const handleRemoveMaterialRow = (index) => {
+    if (materialRows.length > 1) {
+      setMaterialRows((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      setMaterialRows([{ key: "", value: "" }]);
+    }
+  };
+
+  const handleMaterialRowChange = (index, field, value) => {
+    const updatedRows = [...materialRows];
+    updatedRows[index][field] = value;
+    setMaterialRows(updatedRows);
   };
 
   const uploadToCloudinary = async (file) => {
@@ -188,6 +221,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: parseInt(formData.stockAmount) || 0,
         mainImage: mainImageUrl,
         extraImages: combinedExtraImages.filter((url) => url !== null),
+        genDescription: formData.genDescription || "",
+        materialStructure: materialRows.reduce((acc, row) => {
+          if (row.key.trim()) {
+            acc[row.key.trim()] = row.value.trim();
+          }
+          return acc;
+        }, {}),
       };
 
       if (isEditMode) {
@@ -219,7 +259,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
   const RequiredStar = () => <span className="text-red-500 ml-1">*</span>;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
@@ -387,16 +427,74 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-slate-700">
-                      Amount of Description
+                      General Description
                     </label>
                     <textarea
-                      name="amountOfDescription"
-                      value={formData.amountOfDescription}
+                      name="genDescription"
+                      value={formData.genDescription}
                       onChange={handleInputChange}
                       rows={2}
                       className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none"
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Material Structure Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                    Material Structure
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={handleAddMaterialRow}
+                    className="text-xs font-bold text-[#fa1a00] hover:text-red-700 transition-colors flex items-center gap-1"
+                  >
+                    <Plus size={14} /> Add Material
+                  </button>
+                </div>
+
+                <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+                  {materialRows.map((row, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <input
+                          placeholder="Layer Type (e.g. MOPP)"
+                          value={row.key}
+                          onChange={(e) =>
+                            handleMaterialRowChange(
+                              index,
+                              "key",
+                              e.target.value,
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        />
+                      </div>
+                      <div className="w-1/3">
+                        <input
+                          placeholder="Microns"
+                          value={row.value}
+                          onChange={(e) =>
+                            handleMaterialRowChange(
+                              index,
+                              "value",
+                              e.target.value,
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMaterialRow(index)}
+                        className="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
