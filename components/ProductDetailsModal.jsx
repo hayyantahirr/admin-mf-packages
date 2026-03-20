@@ -198,7 +198,8 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                       </div>
                     </div>
                   )}
-                {product.capacitySpecs &&
+                {product.showCapacity &&
+                  product.capacitySpecs &&
                   Object.keys(product.capacitySpecs).length > 0 && (
                     <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
                       <h5 className="text-xs font-bold text-slate-400 uppercase mb-3">

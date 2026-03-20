@@ -24,6 +24,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     stockAmount: "",
     sku: "",
     genDescription: "",
+    showCapacity: true,
     capacitySpecs: {
       ricePulses: "",
       pinkSalt: "",
@@ -60,18 +61,19 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: product.stockAmount?.toString() || "",
         sku: product.sku || "",
         genDescription: product.genDescription || "",
+        showCapacity: product.showCapacity !== false, // Default to true if undefined
         capacitySpecs: {
-          ricePulses: product.capacitySpecs?.ricePulses || "",
-          pinkSalt: product.capacitySpecs?.pinkSalt || "",
-          mixNimco: product.capacitySpecs?.mixNimco || "",
-          mixSeeds: product.capacitySpecs?.mixSeeds || "",
-          moringaPowder: product.capacitySpecs?.moringaPowder || "",
-          mixDryFruits: product.capacitySpecs?.mixDryFruits || "",
-          ispaghol: product.capacitySpecs?.ispaghol || "",
-          dehydratedFruits: product.capacitySpecs?.dehydratedFruits || "",
-          mixSpices: product.capacitySpecs?.mixSpices || "",
-          tea: product.capacitySpecs?.tea || "",
-          flour: product.capacitySpecs?.flour || "",
+          ricePulses: product.capacitySpecs?.["Rice & Pulses"] || "",
+          pinkSalt: product.capacitySpecs?.["Pink Salt"] || "",
+          mixNimco: product.capacitySpecs?.["Mix Nimco"] || "",
+          mixSeeds: product.capacitySpecs?.["Mix Seeds"] || "",
+          moringaPowder: product.capacitySpecs?.["Moringa Powder"] || "",
+          mixDryFruits: product.capacitySpecs?.["Mix Dry Fruits"] || "",
+          ispaghol: product.capacitySpecs?.["Ispaghol"] || "",
+          dehydratedFruits: product.capacitySpecs?.["Dehydrated Fruits"] || "",
+          mixSpices: product.capacitySpecs?.["Mix Spices"] || "",
+          tea: product.capacitySpecs?.["Tea"] || "",
+          flour: product.capacitySpecs?.["Flour"] || "",
         },
       });
       setPreviews({
@@ -103,6 +105,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: "",
         sku: "",
         genDescription: "",
+        showCapacity: true,
         capacitySpecs: {
           ricePulses: "",
           pinkSalt: "",
@@ -223,6 +226,10 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     }
   };
 
+  const handleToggleCapacity = () => {
+    setFormData((prev) => ({ ...prev, showCapacity: !prev.showCapacity }));
+  };
+
   const isFormValid = () => {
     const hasMaterial = materialRows.some((row) => row.key.trim() !== "");
     const hasRequiredFields =
@@ -294,37 +301,35 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         mainImage: mainImageUrl,
         extraImages: combinedExtraImages.filter((url) => url !== null),
         genDescription: formData.genDescription || "",
+        showCapacity: formData.showCapacity,
         materialStructure: materialRows.reduce((acc, row) => {
           if (row.key.trim()) {
             acc[row.key.trim()] = row.value.trim();
           }
           return acc;
         }, {}),
-        capacitySpecs: Object.entries(formData.capacitySpecs).reduce(
-          (acc, [key, val]) => {
-            const formatted = formatCapacityValue(val);
-            if (formatted) {
-              // Convert camelCase key to readable label if needed, or keep as is
-              // Using readable keys as requested in Firestore mapping
-              const labels = {
-                ricePulses: "Rice & Pulses",
-                pinkSalt: "Pink Salt",
-                mixNimco: "Mix Nimco",
-                mixSeeds: "Mix Seeds",
-                moringaPowder: "Moringa Powder",
-                mixDryFruits: "Mix Dry Fruits",
-                ispaghol: "Ispaghol",
-                dehydratedFruits: "Dehydrated Fruits",
-                mixSpices: "Mix Spices",
-                tea: "Tea",
-                flour: "Flour",
-              };
-              acc[labels[key] || key] = formatted;
-            }
-            return acc;
-          },
-          {},
-        ),
+        capacitySpecs: formData.showCapacity
+          ? Object.entries(formData.capacitySpecs).reduce((acc, [key, val]) => {
+              const formatted = formatCapacityValue(val);
+              if (formatted) {
+                const labels = {
+                  ricePulses: "Rice & Pulses",
+                  pinkSalt: "Pink Salt",
+                  mixNimco: "Mix Nimco",
+                  mixSeeds: "Mix Seeds",
+                  moringaPowder: "Moringa Powder",
+                  mixDryFruits: "Mix Dry Fruits",
+                  ispaghol: "Ispaghol",
+                  dehydratedFruits: "Dehydrated Fruits",
+                  mixSpices: "Mix Spices",
+                  tea: "Tea",
+                  flour: "Flour",
+                };
+                acc[labels[key] || key] = formatted;
+              }
+              return acc;
+            }, {})
+          : {},
       };
 
       if (isEditMode) {
@@ -540,38 +545,54 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
               {/* Product Capacity Section */}
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-                    Product Capacity (Grams/Size)
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
-                    {[
-                      { key: "ricePulses", label: "Rice & Pulses" },
-                      { key: "pinkSalt", label: "Pink Salt" },
-                      { key: "mixNimco", label: "Mix Nimco" },
-                      { key: "mixSeeds", label: "Mix Seeds" },
-                      { key: "moringaPowder", label: "Moringa Powder" },
-                      { key: "mixDryFruits", label: "Mix Dry Fruits" },
-                      { key: "ispaghol", label: "Ispaghol" },
-                      { key: "dehydratedFruits", label: "Dehydrated Fruits" },
-                      { key: "mixSpices", label: "Mix Spices" },
-                      { key: "tea", label: "Tea" },
-                      { key: "flour", label: "Flour" },
-                    ].map((field) => (
-                      <div key={field.key} className="space-y-1.5">
-                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
-                          {field.label}
-                        </label>
-                        <input
-                          type="text"
-                          name={`capacitySpecs.${field.key}`}
-                          value={formData.capacitySpecs[field.key]}
-                          onChange={handleInputChange}
-                          placeholder="e.g. 50g"
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
-                        />
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                      Product Capacity (Grams/Size)
+                    </h4>
+                    <label className="relative inline-flex cursor-pointer items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.showCapacity}
+                        onChange={handleToggleCapacity}
+                        className="peer sr-only"
+                      />
+                      <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
+                      <span className="ml-3 text-xs font-bold text-slate-500 uppercase">
+                        {formData.showCapacity ? "Included" : "Excluded"}
+                      </span>
+                    </label>
                   </div>
+                  {formData.showCapacity && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-6 transition-all duration-300">
+                      {[
+                        { key: "ricePulses", label: "Rice & Pulses" },
+                        { key: "pinkSalt", label: "Pink Salt" },
+                        { key: "mixNimco", label: "Mix Nimco" },
+                        { key: "mixSeeds", label: "Mix Seeds" },
+                        { key: "moringaPowder", label: "Moringa Powder" },
+                        { key: "mixDryFruits", label: "Mix Dry Fruits" },
+                        { key: "ispaghol", label: "Ispaghol" },
+                        { key: "dehydratedFruits", label: "Dehydrated Fruits" },
+                        { key: "mixSpices", label: "Mix Spices" },
+                        { key: "tea", label: "Tea" },
+                        { key: "flour", label: "Flour" },
+                      ].map((field) => (
+                        <div key={field.key} className="space-y-1.5">
+                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                            {field.label}
+                          </label>
+                          <input
+                            type="text"
+                            name={`capacitySpecs.${field.key}`}
+                            value={formData.capacitySpecs[field.key]}
+                            onChange={handleInputChange}
+                            placeholder="e.g. 50g"
+                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
