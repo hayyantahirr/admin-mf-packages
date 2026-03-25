@@ -366,17 +366,17 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl transition-all duration-300">
+      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl bg-[#0b3a4c] shadow-2xl transition-all duration-300 border border-white/10">
         <form onSubmit={handleSubmit}>
           {/* Modal Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/80 px-8 py-5 backdrop-blur-md">
-            <h3 className="text-xl font-bold text-[#0b3a4c]">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#0b3a4c]/80 px-8 py-5 backdrop-blur-md">
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight">
               {isEditMode ? "Edit Product" : "Add New Product"}
             </h3>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+              className="rounded-full p-2 text-white/40 transition-colors hover:bg-white/5 hover:text-white"
             >
               <X size={20} />
             </button>
@@ -386,12 +386,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             <div className="space-y-6">
               <div>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-[#fa1a00] mb-4">
                   Basic Information
                 </h4>
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-white/80">
                       Product Name <RequiredStar />
                     </label>
                     <input
@@ -400,13 +400,14 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       value={formData.name}
                       onChange={handleInputChange}
                       type="text"
-                      className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                      placeholder="e.g. Kraft Pouch 250g"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         Size <RequiredStar />
                       </label>
                       <input
@@ -415,11 +416,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         value={formData.size}
                         onChange={handleInputChange}
                         type="text"
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        placeholder="e.g. 10x15cm"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         Category <RequiredStar />
                       </label>
                       <select
@@ -427,7 +429,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         value={formData.category}
                         onChange={handleInputChange}
                         required
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all bg-white"
+                        className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
                       >
                         <option value="">Select Category</option>
                         <option value="Kraft paper standup pouch">
@@ -455,7 +457,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         Price (Rs.) <RequiredStar />
                       </label>
                       <input
@@ -465,11 +467,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         onChange={handleInputChange}
                         type="number"
                         step="0.01"
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        placeholder="0.00"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         Printing Price (Rs.)
                       </label>
                       <input
@@ -478,28 +481,29 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         onChange={handleInputChange}
                         type="number"
                         step="0.01"
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        placeholder="0.00"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         In Stock
                       </label>
                       <select
                         name="inStock"
                         value={formData.inStock}
                         onChange={handleInputChange}
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all bg-white"
+                        className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
                       >
                         <option value="true">Yes</option>
                         <option value="false">No</option>
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-white/80">
                         Stock Amount <RequiredStar />
                       </label>
                       <input
@@ -508,13 +512,14 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         value={formData.stockAmount}
                         onChange={handleInputChange}
                         type="number"
-                        className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                        placeholder="0"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-white/80">
                       Description <RequiredStar />
                     </label>
                     <textarea
@@ -523,12 +528,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       value={formData.description}
                       onChange={handleInputChange}
                       rows={3}
-                      className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none"
+                      placeholder="Enter main product description..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none placeholder:text-white/20"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-white/80">
                       General Description
                     </label>
                     <textarea
@@ -536,7 +542,8 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       value={formData.genDescription}
                       onChange={handleInputChange}
                       rows={2}
-                      className="w-full rounded-lg border border-slate-200 px-4 py-2.5 text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none"
+                      placeholder="Enter extra general information..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none placeholder:text-white/20"
                     />
                   </div>
                 </div>
@@ -546,8 +553,8 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
-                      Product Capacity (Grams/Size)
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-[#fa1a00]">
+                      Product Capacity
                     </h4>
                     <label className="relative inline-flex cursor-pointer items-center">
                       <input
@@ -556,14 +563,14 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         onChange={handleToggleCapacity}
                         className="peer sr-only"
                       />
-                      <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
-                      <span className="ml-3 text-xs font-bold text-slate-500 uppercase">
+                      <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
+                      <span className="ml-3 text-xs font-bold text-white/40 uppercase">
                         {formData.showCapacity ? "Included" : "Excluded"}
                       </span>
                     </label>
                   </div>
                   {formData.showCapacity && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-6 transition-all duration-300">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-2xl border border-white/5 bg-white/5 p-6 transition-all duration-300">
                       {[
                         { key: "ricePulses", label: "Rice & Pulses" },
                         { key: "pinkSalt", label: "Pink Salt" },
@@ -578,7 +585,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         { key: "flour", label: "Flour" },
                       ].map((field) => (
                         <div key={field.key} className="space-y-1.5">
-                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">
+                          <label className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
                             {field.label}
                           </label>
                           <input
@@ -587,7 +594,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                             value={formData.capacitySpecs[field.key]}
                             onChange={handleInputChange}
                             placeholder="e.g. 50g"
-                            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                           />
                         </div>
                       ))}
@@ -599,33 +606,33 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
               {/* Material Structure Section */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-[#fa1a00]">
                     Material Structure
                   </h4>
                   <button
                     type="button"
                     onClick={handleAddMaterialRow}
-                    className="text-xs font-bold text-[#fa1a00] hover:text-red-700 transition-colors flex items-center gap-1"
+                    className="text-xs font-bold text-white hover:text-[#fa1a00] transition-colors flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10"
                   >
-                    <Plus size={14} /> Add Material
+                    <Plus size={14} /> Add Layer
                   </button>
                 </div>
 
-                <div className="space-y-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+                <div className="space-y-3 rounded-2xl border border-white/5 bg-white/5 p-4">
                   {materialRows.map((row, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="flex-1">
                         <input
-                          placeholder="Layer Type (e.g. MOPP)"
+                          placeholder="Layer (e.g. MOPP)"
                           value={row.key}
                           onChange={(e) =>
                             handleMaterialRowChange(
-                              index,
-                              "key",
-                              e.target.value,
-                            )
-                          }
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                                index,
+                                "key",
+                                e.target.value,
+                                )
+                            }
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                         />
                       </div>
                       <div className="w-1/3">
@@ -639,13 +646,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                               e.target.value,
                             )
                           }
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                         />
                       </div>
                       <button
                         type="button"
                         onClick={() => handleRemoveMaterialRow(index)}
-                        className="rounded-lg p-2 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                        className="rounded-xl p-2 text-white/20 hover:bg-[#fa1a00]/10 hover:text-[#fa1a00] transition-all"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -657,15 +664,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
 
             <div className="space-y-6">
               <div>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-[#fa1a00] mb-4">
                   Product Images
                 </h4>
 
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-white/80">
                     Main Product Image <RequiredStar />
                   </label>
-                  <div className="group relative flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-[#fa1a00] hover:bg-red-50/30 overflow-hidden">
+                  <div className="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/5 transition-all hover:border-[#fa1a00] hover:bg-[#fa1a00]/5 overflow-hidden">
                     {previews.main ? (
                       <div className="relative h-full w-full">
                         <img
@@ -676,16 +683,16 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         <button
                           type="button"
                           onClick={removeMainImage}
-                          className="absolute top-2 right-2 bg-white/80 rounded-full p-1.5 text-red-500 hover:bg-white transition-colors shadow-sm"
+                          className="absolute top-3 right-3 bg-[#fa1a00] rounded-full p-2 text-white hover:bg-red-700 transition-colors shadow-xl"
                         >
                           <X size={16} />
                         </button>
                       </div>
                     ) : (
                       <>
-                        <div className="flex flex-col items-center space-y-2 text-slate-400 group-hover:text-[#fa1a00]">
-                          <Upload size={32} />
-                          <span className="text-sm font-medium">
+                        <div className="flex flex-col items-center space-y-2 text-white/20 group-hover:text-[#fa1a00]">
+                          <Upload size={40} />
+                          <span className="text-sm font-bold uppercase tracking-widest">
                             Upload thumbnail
                           </span>
                         </div>
@@ -701,15 +708,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-3">
-                  <label className="text-sm font-medium text-slate-700">
+                <div className="mt-10 space-y-3">
+                  <label className="text-sm font-medium text-white/80">
                     Extra Images (Max 5)
                   </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
                     {extraImagesState.map((item, i) => (
                       <div
                         key={i}
-                        className="group relative flex aspect-square rounded-lg border border-slate-200 bg-slate-50 overflow-hidden"
+                        className="group relative flex aspect-square rounded-xl border border-white/10 bg-white/5 overflow-hidden shadow-lg"
                       >
                         <img
                           src={item.url}
@@ -719,16 +726,16 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         <button
                           type="button"
                           onClick={() => removeExtraImage(i)}
-                          className="absolute top-1 right-1 bg-white/80 rounded-full p-1 text-red-500 hover:bg-white transition-colors"
+                          className="absolute top-1 right-1 bg-black/60 backdrop-blur-md rounded-full p-1 text-white hover:bg-[#fa1a00] transition-colors"
                         >
                           <X size={14} />
                         </button>
                       </div>
                     ))}
                     {extraImagesState.length < 5 && (
-                      <label className="group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-[#fa1a00] hover:bg-red-50/30">
-                        <div className="text-slate-300 group-hover:text-[#fa1a00]">
-                          <ImageIcon size={20} />
+                      <label className="group relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 bg-white/5 transition-all hover:border-[#fa1a00] hover:bg-[#fa1a00]/5">
+                        <div className="text-white/20 group-hover:text-[#fa1a00]">
+                          <ImageIcon size={24} />
                         </div>
                         <input
                           type="file"
@@ -745,19 +752,19 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
             </div>
           </div>
 
-          <div className="sticky bottom-0 z-10 flex items-center justify-end gap-3 border-t border-slate-100 bg-white px-8 py-5">
+          <div className="sticky bottom-0 z-10 flex items-center justify-end gap-4 border-t border-white/10 bg-[#0b3a4c] px-8 py-6">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-lg px-6 py-2.5 font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50"
+              className="rounded-xl px-8 py-3 font-bold text-white/60 uppercase tracking-widest text-xs transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !isFormValid()}
-              className="flex items-center gap-2 rounded-lg bg-[#0b3a4c] px-8 py-2.5 font-semibold text-white shadow-lg shadow-blue-900/10 transition-all hover:bg-[#0d465c] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
+              className="flex items-center gap-2 rounded-xl bg-white px-10 py-3 font-black text-[#0b3a4c] uppercase tracking-widest text-xs shadow-2xl transition-all hover:bg-[#fa1a00] hover:text-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
             >
               {loading && <Loader2 className="animate-spin" size={18} />}
               {loading
