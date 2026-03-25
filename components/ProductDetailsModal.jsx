@@ -21,7 +21,9 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
               <h3 className="text-xl font-bold text-white uppercase tracking-tight">
                 Product Details
               </h3>
-              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">ID: {product.id}</p>
+              <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                ID: {product.id}
+              </p>
             </div>
           </div>
           <button
@@ -173,7 +175,73 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                     </p>
                   </div>
                 )}
-                
+
+                {product.technicalSpecs && (
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 mt-4">
+                    <h5 className="text-[10px] font-black text-[#fa1a00] uppercase tracking-widest mb-4">
+                      Technical Specifications
+                    </h5>
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Colour
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.colour || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Style
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.style || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Waterproof / Oil-proof
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.waterproof ? "YES" : "NO"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Heat Sealable
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.heatSealable ? "YES" : "NO"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Tear Notch
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.tearNotch ? "YES" : "NO"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Closure
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.closure || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col col-span-2">
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">
+                          Window
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          {product.technicalSpecs.window || "N/A"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {product.materialStructure &&
                   Object.keys(product.materialStructure).length > 0 && (
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-5">

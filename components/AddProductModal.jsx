@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { X, Upload, Image as ImageIcon, Loader2, Trash2, Plus } from "lucide-react";
+import {
+  X,
+  Upload,
+  Image as ImageIcon,
+  Loader2,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import { db } from "../config/firebase";
 import {
   collection,
@@ -25,6 +32,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     sku: "",
     genDescription: "",
     showCapacity: true,
+    technicalSpecs: {
+      colour: "",
+      waterproof: "false",
+      style: "",
+      heatSealable: "false",
+      tearNotch: "false",
+      closure: "",
+      window: "",
+    },
     capacitySpecs: {
       ricePulses: "",
       pinkSalt: "",
@@ -62,6 +78,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         sku: product.sku || "",
         genDescription: product.genDescription || "",
         showCapacity: product.showCapacity !== false, // Default to true if undefined
+        technicalSpecs: {
+          colour: product.technicalSpecs?.colour || "",
+          waterproof: product.technicalSpecs?.waterproof ? "true" : "false",
+          style: product.technicalSpecs?.style || "",
+          heatSealable: product.technicalSpecs?.heatSealable ? "true" : "false",
+          tearNotch: product.technicalSpecs?.tearNotch ? "true" : "false",
+          closure: product.technicalSpecs?.closure || "",
+          window: product.technicalSpecs?.window || "",
+        },
         capacitySpecs: {
           ricePulses: product.capacitySpecs?.["Rice & Pulses"] || "",
           pinkSalt: product.capacitySpecs?.["Pink Salt"] || "",
@@ -106,6 +131,15 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         sku: "",
         genDescription: "",
         showCapacity: true,
+        technicalSpecs: {
+          colour: "",
+          waterproof: "false",
+          style: "",
+          heatSealable: "false",
+          tearNotch: "false",
+          closure: "",
+          window: "",
+        },
         capacitySpecs: {
           ricePulses: "",
           pinkSalt: "",
@@ -300,8 +334,16 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         stockAmount: parseInt(formData.stockAmount) || 0,
         mainImage: mainImageUrl,
         extraImages: combinedExtraImages.filter((url) => url !== null),
-        genDescription: formData.genDescription || "",
         showCapacity: formData.showCapacity,
+        technicalSpecs: {
+          colour: formData.technicalSpecs.colour,
+          waterproof: formData.technicalSpecs.waterproof === "true",
+          style: formData.technicalSpecs.style,
+          heatSealable: formData.technicalSpecs.heatSealable === "true",
+          tearNotch: formData.technicalSpecs.tearNotch === "true",
+          closure: formData.technicalSpecs.closure,
+          window: formData.technicalSpecs.window,
+        },
         materialStructure: materialRows.reduce((acc, row) => {
           if (row.key.trim()) {
             acc[row.key.trim()] = row.value.trim();
@@ -549,6 +591,134 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                 </div>
               </div>
 
+              {/* Technical Specifications Section */}
+              <div>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-[#fa1a00] mb-4">
+                  Technical Specifications
+                </h4>
+                <div className="grid grid-cols-2 gap-4 rounded-2xl border border-white/5 bg-white/5 p-6 shadow-xl">
+                  {/* Colour */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Colour
+                    </label>
+                    <select
+                      name="technicalSpecs.colour"
+                      value={formData.technicalSpecs.colour}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                    >
+                      <option value="">Select Colour</option>
+                      <option value="Brown">Brown</option>
+                      <option value="White">White</option>
+                      <option value="Black">Black</option>
+                      <option value="Silver">Silver</option>
+                      <option value="Transparent">Transparent</option>
+                      <option value="Gold">Gold</option>
+                      <option value="Custom">Custom</option>
+                    </select>
+                  </div>
+
+                  {/* Style */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Style
+                    </label>
+                    <select
+                      name="technicalSpecs.style"
+                      value={formData.technicalSpecs.style}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                    >
+                      <option value="">Select Style</option>
+                      <option value="Stand up">Stand up</option>
+                      <option value="Flat Bottom">Flat Bottom</option>
+                      <option value="Side Gusset">Side Gusset</option>
+                      <option value="Pillow Pouch">Pillow Pouch</option>
+                      <option value="Spout">Spout</option>
+                    </select>
+                  </div>
+
+                  {/* Waterproof */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Waterproof / Oil-proof
+                    </label>
+                    <select
+                      name="technicalSpecs.waterproof"
+                      value={formData.technicalSpecs.waterproof}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                    >
+                      <option value="true">Yes</option>
+                      <option value="false">No</option>
+                    </select>
+                  </div>
+
+                  {/* Heat Sealable */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Heat Sealable
+                    </label>
+                    <select
+                      name="technicalSpecs.heatSealable"
+                      value={formData.technicalSpecs.heatSealable}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                    >
+                      <option value="true">Yes</option>
+                      <option value="false">No</option>
+                    </select>
+                  </div>
+
+                  {/* Tear Notch */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Tear Notch
+                    </label>
+                    <select
+                      name="technicalSpecs.tearNotch"
+                      value={formData.technicalSpecs.tearNotch}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-[#0b3a4c] px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all"
+                    >
+                      <option value="true">Yes</option>
+                      <option value="false">No</option>
+                    </select>
+                  </div>
+
+                  {/* Closure */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-white">
+                      Closure
+                    </label>
+                    <input
+                      name="technicalSpecs.closure"
+                      value={formData.technicalSpecs.closure}
+                      onChange={handleInputChange}
+                      type="text"
+                      placeholder="e.g., Resealable Zipper"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                    />
+                  </div>
+
+                  {/* Window */}
+                  <div className="space-y-1.5 col-span-2">
+                    <label className="text-sm font-medium text-white">
+                      Window
+                    </label>
+                    <input
+                      name="technicalSpecs.window"
+                      value={formData.technicalSpecs.window}
+                      onChange={handleInputChange}
+                      type="text"
+                      placeholder="e.g., Clear Rectangle, Oval, or None"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Product Capacity Section */}
               <div className="space-y-6">
                 <div>
@@ -627,11 +797,11 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                           value={row.key}
                           onChange={(e) =>
                             handleMaterialRowChange(
-                                index,
-                                "key",
-                                e.target.value,
-                                )
-                            }
+                              index,
+                              "key",
+                              e.target.value,
+                            )
+                          }
                           className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
                         />
                       </div>
