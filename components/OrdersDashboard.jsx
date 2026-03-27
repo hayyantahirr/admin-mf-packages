@@ -246,6 +246,9 @@ export default function OrdersDashboard() {
                   <span className="text-[10px] font-black uppercase tracking-widest text-[#CBD5E1]">
                     {order.items?.length || 0} Products
                   </span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#CBD5E1]">
+                    1 PKR = {order.exchangeRateAtTimeOfPurchase || 0}
+                  </span>
                 </div>
 
                 <div className="flex-1 space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -279,11 +282,10 @@ export default function OrdersDashboard() {
                           <span>Qty: {item.quantity}</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-black text-white">
-                          Rs. {item.totalPrice.toLocaleString()}
-                        </p>
-                      </div>
+                      <p className="text-sm font-black text-white">
+                        {order.currencyUsed}{" "}
+                        {item.totalPriceConverted?.toLocaleString() || "0"}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -309,7 +311,9 @@ export default function OrdersDashboard() {
                         Grand Total
                       </p>
                       <p className="text-3xl font-black text-white tracking-tighter">
-                        Rs. {order.totalAmount?.toLocaleString()}
+                        {order.currencyUsed}{" "}
+                        {order.totalAmountConverted?.toLocaleString() || "0"} /
+                        PKR {order.totalAmountPKR?.toLocaleString() || "0"}
                       </p>
                     </div>
                   </div>

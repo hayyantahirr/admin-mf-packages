@@ -211,7 +211,7 @@ export default function ProductManagement() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-800">
-                        Rs. {product.price?.toLocaleString()}
+                        Rs. {product.price?.toLocaleString() || "0"}
                       </div>
                       {product.printingPrice && (
                         <div className="text-[10px] text-slate-400">
