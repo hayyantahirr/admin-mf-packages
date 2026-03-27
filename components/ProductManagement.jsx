@@ -229,7 +229,7 @@ export default function ProductManagement() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">
+                    <td className="px-6 py-4 text-sm text-black font-bold">
                       {product.size || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-right">
