@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Mail, X, FileText } from "lucide-react";
+import { LayoutDashboard, Package, Mail, X, FileText, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
 export default function Sidebar({
@@ -13,6 +13,11 @@ export default function Sidebar({
       label: "Product Management",
       icon: <Package size={20} />,
       id: "products",
+    },
+    {
+      label: "Orders",
+      icon: <ShoppingBag size={20} />,
+      id: "orders",
     },
     { label: "Blogs", icon: <FileText size={20} />, id: "blogs" },
     { label: "Inquiries", icon: <Mail size={20} />, id: "inquiries" },

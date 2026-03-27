@@ -6,6 +6,7 @@ import Overview from "@/components/Overview";
 import ProductManagement from "@/components/ProductManagement";
 import Blogs from "@/components/Blogs";
 import Sidebar from "@/components/Sidebar";
+import OrdersDashboard from "@/components/OrdersDashboard";
 import { useState } from "react";
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
             {activeTab === "overview" && <Overview />}
             {activeTab === "products" && <ProductManagement />}
             {activeTab === "blogs" && <Blogs />}
+            {activeTab === "orders" && <OrdersDashboard />}
             {activeTab === "inquiries" && <Inquiries />}
           </div>
         </main>
