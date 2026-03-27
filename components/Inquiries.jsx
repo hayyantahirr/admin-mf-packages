@@ -8,6 +8,7 @@ import {
   Clock,
   Phone,
   Trash2,
+  Check,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { db } from "../config/firebase";
@@ -18,6 +19,7 @@ import {
   orderBy,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 export default function Inquiries() {
@@ -75,6 +77,15 @@ export default function Inquiries() {
         console.error("Error deleting inquiry:", err);
         alert("Failed to delete inquiry. Please try again.");
       }
+    }
+  };
+
+  const handleMarkAsSeen = async (e, inquiryId) => {
+    e.stopPropagation();
+    try {
+      await updateDoc(doc(db, "contacts", inquiryId), { isSeen: true });
+    } catch (err) {
+      console.error("Error marking inquiry as seen:", err);
     }
   };
 
@@ -221,20 +232,33 @@ export default function Inquiries() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-shrink-0 flex-col gap-3 sm:mt-0 sm:items-end">
+                <div className="mt-4 flex shrink-0 flex-col gap-3 sm:mt-0 sm:items-end">
                   <div className="flex items-center gap-2">
-                    <span className="rounded-md bg-red-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#fa1a00]">
-                      New
-                    </span>
-                    <button
-                      onClick={(e) => handleDelete(e, inquiry.id, inquiry.name)}
-                      title="Delete Inquiry"
-                      className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {inquiry.isSeen === false && (
+                      <span className="rounded-md bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                        New
+                      </span>
+                    )}
+                    <div className="flex gap-2">
+                      {inquiry.isSeen === false && (
+                        <button
+                          onClick={(e) => handleMarkAsSeen(e, inquiry.id)}
+                          title="Mark as Seen"
+                          className="rounded-lg bg-emerald-50 p-1.5 text-emerald-600 transition-colors hover:bg-emerald-100"
+                        >
+                          <Check size={16} />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => handleDelete(e, inquiry.id, inquiry.name)}
+                        title="Delete Inquiry"
+                        className="rounded-lg bg-red-50 p-1.5 text-red-600 transition-colors hover:bg-red-100"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400 font-bold uppercase tracking-tight">
                     <Clock size={14} />
                     {formatDate(inquiry.createdAt)}
                   </div>

@@ -9,6 +9,7 @@ import {
   orderBy,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   ShoppingBag,
@@ -51,6 +52,27 @@ export default function OrdersDashboard() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleAccept = async (orderId) => {
+    try {
+      const orderRef = doc(db, "orders", orderId);
+      await updateDoc(orderRef, { status: "accepted" });
+    } catch (error) {
+      console.error("Error accepting order:", error);
+      alert("Failed to accept order.");
+    }
+  };
+
+  const handleReject = async (orderId) => {
+    if (window.confirm("Are you sure you want to reject and PERMANENTLY delete this order?")) {
+      try {
+        await deleteDoc(doc(db, "orders", orderId));
+      } catch (error) {
+        console.error("Error rejecting order:", error);
+        alert("Failed to reject order.");
+      }
+    }
   };
 
   if (loading) {
@@ -120,11 +142,10 @@ export default function OrdersDashboard() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-[10px] font-black text-white uppercase tracking-widest transition-all hover:bg-emerald-600 active:scale-95">
-                  <Check size={14} />
-                  Accept
-                </button>
-                <button className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-[10px] font-black text-white uppercase tracking-widest transition-all hover:bg-red-600 active:scale-95">
+                <button
+                  onClick={() => handleReject(order.id)}
+                  className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-[10px] font-black text-white uppercase tracking-widest transition-all hover:bg-red-600 active:scale-95"
+                >
                   <X size={14} />
                   Reject
                 </button>
@@ -247,7 +268,7 @@ export default function OrdersDashboard() {
                     {order.items?.length || 0} Products
                   </span>
                   <span className="text-[10px] font-black uppercase tracking-widest text-[#CBD5E1]">
-                    1 PKR = {order.exchangeRateAtTimeOfPurchase || 0}
+                    1 PKR = {order.exchangeRateAtTimeOfPurchase || 0} {order.currencyUsed}
                   </span>
                 </div>
 

@@ -1,4 +1,7 @@
 import { LayoutDashboard, Package, Mail, X, FileText, ShoppingBag } from "lucide-react";
+import { useState, useEffect } from "react";
+import { db } from "../config/firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import Image from "next/image";
 
 export default function Sidebar({
@@ -7,6 +10,34 @@ export default function Sidebar({
   isOpen,
   setIsOpen,
 }) {
+  const [pendingOrders, setPendingOrders] = useState(0);
+  const [unseenInquiries, setUnseenInquiries] = useState(0);
+
+  useEffect(() => {
+    // Listen for pending orders
+    const ordersQuery = query(
+      collection(db, "orders"),
+      where("status", "==", "pending")
+    );
+    const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
+      setPendingOrders(snapshot.size);
+    });
+
+    // Listen for unseen inquiries (contacts)
+    const inquiriesQuery = query(
+      collection(db, "contacts"),
+      where("isSeen", "==", false)
+    );
+    const unsubscribeInquiries = onSnapshot(inquiriesQuery, (snapshot) => {
+      setUnseenInquiries(snapshot.size);
+    });
+
+    return () => {
+      unsubscribeOrders();
+      unsubscribeInquiries();
+    };
+  }, []);
+
   const navItems = [
     { label: "Overview", icon: <LayoutDashboard size={20} />, id: "overview" },
     {
@@ -18,9 +49,15 @@ export default function Sidebar({
       label: "Orders",
       icon: <ShoppingBag size={20} />,
       id: "orders",
+      badge: pendingOrders,
     },
     { label: "Blogs", icon: <FileText size={20} />, id: "blogs" },
-    { label: "Inquiries", icon: <Mail size={20} />, id: "inquiries" },
+    {
+      label: "Inquiries",
+      icon: <Mail size={20} />,
+      id: "inquiries",
+      badge: unseenInquiries,
+    },
   ];
 
   return (
@@ -76,7 +113,12 @@ export default function Sidebar({
                   }`}
                 >
                   {item.icon}
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium flex-1 text-left">{item.label}</span>
+                  {item.badge > 0 && (
+                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-black text-white shadow-lg ring-2 ring-[#0b3a4c]">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               </li>
             ))}
