@@ -67,7 +67,9 @@ export default function OrdersDashboard() {
       <div className="flex h-96 flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-slate-200 bg-white p-12 text-center text-slate-400 shadow-sm">
         <ShoppingBag size={64} className="text-slate-200" />
         <div>
-          <h3 className="text-xl font-bold text-slate-800">No Orders Received Yet</h3>
+          <h3 className="text-xl font-bold text-slate-800">
+            No Orders Received Yet
+          </h3>
           <p className="mt-2 text-slate-500">
             When customers place orders, they will appear here in realtime.
           </p>
@@ -151,7 +153,7 @@ export default function OrdersDashboard() {
                         Full Name
                       </p>
                       <p className="text-lg font-bold text-white leading-none mt-1">
-                        {order.customerDetails?.name || "N/A"}
+                        {order.customerDetails?.fullName || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -190,8 +192,13 @@ export default function OrdersDashboard() {
                       href={`tel:${order.customerDetails?.phone}`}
                       className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white/5 border border-white/10 px-6 py-4 transition-all hover:bg-white/10 group/btn"
                     >
-                      <Phone size={20} className="text-[#fa1a00] transition-transform group-hover/btn:scale-110" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white">Call Customer</span>
+                      <Phone
+                        size={20}
+                        className="text-[#fa1a00] transition-transform group-hover/btn:scale-110"
+                      />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                        Call Customer
+                      </span>
                     </a>
                     <a
                       href={`https://wa.me/${order.customerDetails?.phone?.replace(/\+/g, "")}`}
@@ -199,8 +206,13 @@ export default function OrdersDashboard() {
                       rel="noopener noreferrer"
                       className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 px-6 py-4 transition-all hover:bg-[#25D366]/20 group/btn"
                     >
-                      <MessageCircle size={20} className="text-[#25D366] transition-transform group-hover/btn:scale-110" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-white">WhatsApp</span>
+                      <MessageCircle
+                        size={20}
+                        className="text-[#25D366] transition-transform group-hover/btn:scale-110"
+                      />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                        WhatsApp
+                      </span>
                     </a>
                   </div>
                 </div>
@@ -218,12 +230,12 @@ export default function OrdersDashboard() {
                     </h4>
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-[#CBD5E1]">
-                    {order.cartItems?.length || 0} Products
+                    {order.items?.length || 0} Products
                   </span>
                 </div>
-
+ 
                 <div className="flex-1 space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                  {order.cartItems?.map((item, idx) => (
+                  {order.items?.map((item, idx) => (
                     <div
                       key={idx}
                       className="flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:bg-white/8"
@@ -243,11 +255,11 @@ export default function OrdersDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="truncate text-sm font-black text-white uppercase tracking-tight">
-                          {item.name}
+                           {item.size}CM - {item.name}
                         </p>
                         <div className="flex items-center gap-3 mt-1 text-[10px] font-bold uppercase tracking-widest text-[#CBD5E1]">
                           <span className="flex items-center gap-1">
-                            <Clock size={10} /> {item.size}
+                            <Clock size={10} />
                           </span>
                           <span className="h-1 w-1 rounded-full bg-[#fa1a00]" />
                           <span>Qty: {item.quantity}</span>
@@ -255,7 +267,7 @@ export default function OrdersDashboard() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-black text-white">
-                          Rs. {(item.price * item.quantity).toLocaleString()}
+                          Rs. {item.totalPrice.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -270,12 +282,18 @@ export default function OrdersDashboard() {
                         <CreditCard size={16} />
                       </div>
                       <div>
-                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#CBD5E1]">Payment Method</p>
-                        <p className="text-xs font-black text-white uppercase tracking-widest">{order.paymentMethod || "COD"}</p>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#CBD5E1]">
+                          Payment Method
+                        </p>
+                        <p className="text-xs font-black text-white uppercase tracking-widest">
+                          {order.paymentMethod || "COD"}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#fa1a00]">Grand Total</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#fa1a00]">
+                        Grand Total
+                      </p>
                       <p className="text-3xl font-black text-white tracking-tighter">
                         Rs. {order.totalAmount?.toLocaleString()}
                       </p>
