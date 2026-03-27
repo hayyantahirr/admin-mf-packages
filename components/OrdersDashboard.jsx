@@ -138,7 +138,7 @@ export default function OrdersDashboard() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fa1a00] text-white shadow-lg shadow-red-500/20">
                     <User size={20} />
                   </div>
-                  <h4 className="text-sm font-black uppercase tracking-widest text-[#fa1a00]">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-white">
                     Customer Details
                   </h4>
                 </div>
@@ -214,6 +214,20 @@ export default function OrdersDashboard() {
                         WhatsApp
                       </span>
                     </a>
+                    <a
+                      href={`mailto:${order.customerDetails?.email}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 px-6 py-4 transition-all hover:bg-[#25D366]/20 group/btn"
+                    >
+                      <Mail
+                        size={20}
+                        className="text-white transition-transform group-hover/btn:scale-110"
+                      />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                        Email Customer
+                      </span>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -225,7 +239,7 @@ export default function OrdersDashboard() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fa1a00]/10 text-[#fa1a00] border border-[#fa1a00]/20">
                       <Package size={20} />
                     </div>
-                    <h4 className="text-sm font-black uppercase tracking-widest text-[#fa1a00]">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-white">
                       Ordered Items
                     </h4>
                   </div>
@@ -233,7 +247,7 @@ export default function OrdersDashboard() {
                     {order.items?.length || 0} Products
                   </span>
                 </div>
- 
+
                 <div className="flex-1 space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                   {order.items?.map((item, idx) => (
                     <div
@@ -255,7 +269,7 @@ export default function OrdersDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="truncate text-sm font-black text-white uppercase tracking-tight">
-                           {item.size}CM - {item.name}
+                          {item.size}CM - {item.name}
                         </p>
                         <div className="flex items-center gap-3 mt-1 text-[10px] font-bold uppercase tracking-widest text-[#CBD5E1]">
                           <span className="flex items-center gap-1">
