@@ -1,8 +1,10 @@
-import { LayoutDashboard, Package, Mail, X, FileText, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, Package, Mail, X, FileText, ShoppingBag, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { db } from "../config/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import Image from "next/image";
+import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar({
   activeTab,
@@ -12,9 +14,11 @@ export default function Sidebar({
 }) {
   const [pendingOrders, setPendingOrders] = useState(0);
   const [unseenInquiries, setUnseenInquiries] = useState(0);
+  const { logout, user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    // Listen for pending orders
+    // ... items from original 17-39 ...
     const ordersQuery = query(
       collection(db, "orders"),
       where("status", "==", "pending")
@@ -23,7 +27,6 @@ export default function Sidebar({
       setPendingOrders(snapshot.size);
     });
 
-    // Listen for unseen inquiries (contacts)
     const inquiriesQuery = query(
       collection(db, "contacts"),
       where("isSeen", "==", false)
@@ -37,6 +40,15 @@ export default function Sidebar({
       unsubscribeInquiries();
     };
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   const navItems = [
     { label: "Overview", icon: <LayoutDashboard size={20} />, id: "overview" },
@@ -97,7 +109,7 @@ export default function Sidebar({
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-4 py-6">
+        <nav className="flex-1 px-4 py-6 overflow-y-auto no-scrollbar">
           <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.id}>
@@ -124,6 +136,21 @@ export default function Sidebar({
             ))}
           </ul>
         </nav>
+
+        {/* User Profile & Logout Section */}
+        <div className="border-t border-[#ffffff1a] p-4 space-y-4">
+          <div className="px-4 py-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#fa1a00]">Logged in as</p>
+            <p className="truncate text-sm font-bold text-white/80">{user?.email}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-xl bg-white/5 px-4 py-3 text-sm font-bold text-red-400 transition-all hover:bg-red-500/10 hover:text-red-500"
+          >
+            <LogOut size={20} />
+            <span>Logout Session</span>
+          </button>
+        </div>
       </div>
     </>
   );
