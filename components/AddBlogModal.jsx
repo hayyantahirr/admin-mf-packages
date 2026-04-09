@@ -118,14 +118,23 @@ export default function AddBlogModal({ isOpen, onClose, post = null }) {
 
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
+
+    const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+    if (!preset || !cloudName) {
+      console.error("Cloudinary environment variables are missing");
+      return null;
+    }
+
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "mf-packages");
-    data.append("cloud_name", "dblnkp5ny");
+    data.append("upload_preset", preset);
+    data.append("cloud_name", cloudName);
 
     try {
       const resp = await fetch(
-        "https://api.cloudinary.com/v1_1/dblnkp5ny/image/upload",
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
           method: "POST",
           body: data,

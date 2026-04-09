@@ -31,8 +31,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/");
     } catch (err) {
-      console.error("Login error:", err);
-      // Friendly error handling
+      // Friendly error handling for the UI
       if (err.code === "auth/invalid-credential") {
         setError("Invalid email or password. Please try again.");
       } else if (err.code === "auth/too-many-requests") {
