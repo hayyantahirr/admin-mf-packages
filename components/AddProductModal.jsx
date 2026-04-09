@@ -57,9 +57,11 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
   });
 
   const [mainImage, setMainImage] = useState(null); // File object for new uploads
+  const [genImage, setGenImage] = useState(null); // File object for new general picture
   const [extraImagesState, setExtraImagesState] = useState([]); // Array of { url, file }
   const [previews, setPreviews] = useState({
     main: null, // URL string
+    gen: null, // URL string for general picture
   });
   const [materialRows, setMaterialRows] = useState([{ key: "", value: "" }]);
 
@@ -103,11 +105,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       });
       setPreviews({
         main: product.mainImage || null,
+        gen: product.genImage || null,
       });
       setExtraImagesState(
         (product.extraImages || []).map((url) => ({ url, file: null })),
       );
       setMainImage(null);
+      setGenImage(null);
 
       // Convert materialStructure object to rows
       const rows = Object.entries(product.materialStructure || {}).map(
@@ -154,9 +158,10 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           flour: "",
         },
       });
-      setPreviews({ main: null });
+      setPreviews({ main: null, gen: null });
       setExtraImagesState([]);
       setMainImage(null);
+      setGenImage(null);
       setMaterialRows([{ key: "", value: "" }]);
     }
   }, [product, isOpen]);
@@ -190,6 +195,17 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     }
   };
 
+  const handleGenImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setGenImage(file);
+      setPreviews((prev) => ({
+        ...prev,
+        gen: URL.createObjectURL(file),
+      }));
+    }
+  };
+
   const handleExtraImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
@@ -208,6 +224,11 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
   const removeMainImage = () => {
     setMainImage(null);
     setPreviews((prev) => ({ ...prev, main: null }));
+  };
+
+  const removeGenImage = () => {
+    setGenImage(null);
+    setPreviews((prev) => ({ ...prev, gen: null }));
   };
 
   const removeExtraImage = (index) => {
@@ -308,6 +329,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         mainImageUrl = await uploadToCloudinary(mainImage);
       }
 
+      // 1.5 Handle General Image URL
+      let genImageUrl = previews.gen;
+      if (genImage) {
+        genImageUrl = await uploadToCloudinary(genImage);
+      }
+
       // 2. Handle Extra Images
       const combinedExtraImages = await Promise.all(
         extraImagesState.map(async (item) => {
@@ -333,6 +360,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         inStock: formData.inStock === "true",
         stockAmount: parseInt(formData.stockAmount) || 0,
         mainImage: mainImageUrl,
+        genImage: genImageUrl || null,
         extraImages: combinedExtraImages.filter((url) => url !== null),
         showCapacity: formData.showCapacity,
         technicalSpecs: {
@@ -870,6 +898,45 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                           required={!isEditMode}
                           type="file"
                           onChange={handleMainImageChange}
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-8 space-y-3">
+                  <label className="text-sm font-medium text-white/80">
+                    General Picture (Optional)
+                  </label>
+                  <div className="group relative flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/5 transition-all hover:border-[#fa1a00] hover:bg-[#fa1a00]/5 overflow-hidden">
+                    {previews.gen ? (
+                      <div className="relative h-full w-full">
+                        <img
+                          src={previews.gen}
+                          alt="General Preview"
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeGenImage}
+                          className="absolute top-3 right-3 bg-[#fa1a00] rounded-full p-2 text-white hover:bg-red-700 transition-colors shadow-xl"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col items-center space-y-2 text-white/20 group-hover:text-[#fa1a00]">
+                          <Upload size={32} />
+                          <span className="text-xs font-bold uppercase tracking-widest">
+                            Upload General Pic
+                          </span>
+                        </div>
+                        <input
+                          type="file"
+                          onChange={handleGenImageChange}
                           accept="image/*"
                           className="absolute inset-0 opacity-0 cursor-pointer"
                         />
