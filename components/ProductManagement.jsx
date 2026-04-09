@@ -278,7 +278,7 @@ export default function ProductManagement() {
                       {product.size || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="flex items-center justify-end gap-2">
                         <button
                           title="Duplicate Product"
                           onClick={(e) => handleDuplicate(e, product)}
