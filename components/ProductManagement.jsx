@@ -1,4 +1,4 @@
-import { Edit2, Trash2, Plus, Package, Search } from "lucide-react";
+import { Edit2, Trash2, Plus, Package, Search, Copy } from "lucide-react";
 import { useState, useEffect } from "react";
 import AddProductModal from "./AddProductModal";
 import ProductDetailsModal from "./ProductDetailsModal";
@@ -10,6 +10,8 @@ import {
   orderBy,
   doc,
   deleteDoc,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 export default function ProductManagement() {
@@ -81,6 +83,49 @@ export default function ProductManagement() {
         console.error("Error deleting product:", error);
         alert("Failed to delete product. Please try again.");
       }
+    }
+  };
+
+  const handleDuplicate = async (e, product) => {
+    e.stopPropagation();
+
+    // Create a new product object by spreading the original.
+    // Using object spreading for the top-level ensures we clone primitives,
+    // but nested maps like technicalSpecs, capacitySpecs, and materialStructure
+    // must be explicitly spread to perform a shallow copy of their contents,
+    // avoiding shared references that could lead to side effects during editing.
+    const duplicateData = {
+      ...product,
+      name: `${product.name} (Copy)`,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      // Deep-copy nested objects to ensure the new product is independent
+      technicalSpecs: product.technicalSpecs ? { ...product.technicalSpecs } : {},
+      capacitySpecs: product.capacitySpecs ? { ...product.capacitySpecs } : {},
+      materialStructure: product.materialStructure
+        ? { ...product.materialStructure }
+        : {},
+      extraImages: product.extraImages ? [...product.extraImages] : [],
+    };
+
+    // Remove the Firestore ID from the data object so a new one is generated
+    delete duplicateData.id;
+
+    try {
+      const docRef = await addDoc(collection(db, "products"), duplicateData);
+
+      // Construct a full product object for the modal to use immediately
+      const newProduct = {
+        id: docRef.id,
+        ...duplicateData,
+      };
+
+      // Automatically open the Edit Modal for the newly created "Copy"
+      setSelectedProduct(newProduct);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error duplicating product:", error);
+      alert("Failed to duplicate product. Please try again.");
     }
   };
 
@@ -234,6 +279,13 @@ export default function ProductManagement() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          title="Duplicate Product"
+                          onClick={(e) => handleDuplicate(e, product)}
+                          className="rounded-lg p-2 text-slate-400 transition-all hover:bg-[#0b3a4c]/10 hover:text-[#0b3a4c]"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </button>
                         <button
                           title="Edit Product"
                           onClick={(e) => handleEdit(e, product)}
