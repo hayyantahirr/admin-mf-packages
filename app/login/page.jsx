@@ -136,7 +136,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/20">
-          Secure Access Only • Powered by Antigravity
+          Secure Access Only • Powered by hayyantahirr
         </p>
       </div>
     </div>
