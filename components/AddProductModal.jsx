@@ -23,8 +23,6 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     name: "",
     size: "",
     price: "",
-    description: "",
-    amountOfDescription: "",
     printingPrice: "",
     category: "",
     inStock: "true",
@@ -71,8 +69,6 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         name: product.name || "",
         size: product.size || "",
         price: product.price?.toString() || "",
-        description: product.description || "",
-        amountOfDescription: product.amountOfDescription || "",
         printingPrice: product.printingPrice?.toString() || "",
         category: product.category || "",
         inStock: product.inStock ? "true" : "false",
@@ -126,8 +122,6 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         name: "",
         size: "",
         price: "",
-        description: "",
-        amountOfDescription: "",
         printingPrice: "",
         category: "",
         inStock: "true",
@@ -300,7 +294,6 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       formData.name.trim() !== "" &&
       formData.size.trim() !== "" &&
       formData.price.trim() !== "" &&
-      formData.description.trim() !== "" &&
       formData.stockAmount.trim() !== "" &&
       formData.category !== "";
 
@@ -360,8 +353,6 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         name: formData.name,
         size: formData.size,
         price: parseFloat(formData.price) || 0,
-        description: formData.description,
-        amountOfDescription: formData.amountOfDescription || "",
         genDescription: formData.genDescription || "",
         sku: formData.sku || "",
         printingPrice: formData.printingPrice
@@ -616,29 +607,14 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-white/80">
-                      Description <RequiredStar />
-                    </label>
-                    <textarea
-                      required
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows={3}
-                      placeholder="Enter main product description..."
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none placeholder:text-white/20"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-white/80">
-                      General Description
+                      Product Description
                     </label>
                     <textarea
                       name="genDescription"
                       value={formData.genDescription}
                       onChange={handleInputChange}
-                      rows={2}
-                      placeholder="Enter extra general information..."
+                      rows={3}
+                      placeholder="Enter detailed product description..."
                       className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all resize-none placeholder:text-white/20"
                     />
                   </div>

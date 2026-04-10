@@ -156,22 +156,22 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
               </div>
 
               <div className="space-y-6 pt-2">
-                <div className="flex items-center gap-2 text-[#fa1a00]">
-                  <Info size={18} />
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em]">
-                    Product Overview
-                  </h4>
-                </div>
-                <p className="text-white/80 leading-relaxed font-medium">
-                  {product.description || "No description provided."}
-                </p>
-                {product.genDescription && (
-                  <div className="rounded-2xl bg-white/5 p-5 border border-white/10">
-                    <h5 className="text-[10px] font-black text-[#fa1a00] uppercase tracking-widest mb-3">
-                      General Description
-                    </h5>
-                    <p className="text-sm text-white/90 leading-relaxed">
+                {product.genDescription ? (
+                  <div className="rounded-2xl bg-white/5 p-6 border border-white/10 shadow-xl">
+                    <div className="flex items-center gap-2 text-[#fa1a00] mb-4">
+                      <Info size={18} />
+                      <h4 className="text-xs font-black uppercase tracking-[0.2em]">
+                        Product Description
+                      </h4>
+                    </div>
+                    <p className="text-white/90 leading-relaxed font-medium whitespace-pre-wrap">
                       {product.genDescription}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl bg-white/5 p-6 border border-white/5 text-center">
+                    <p className="text-white/20 italic text-sm">
+                      No description available.
                     </p>
                   </div>
                 )}
