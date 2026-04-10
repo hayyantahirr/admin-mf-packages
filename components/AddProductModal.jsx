@@ -362,6 +362,8 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         price: parseFloat(formData.price) || 0,
         description: formData.description,
         amountOfDescription: formData.amountOfDescription || "",
+        genDescription: formData.genDescription || "",
+        sku: formData.sku || "",
         printingPrice: formData.printingPrice
           ? parseFloat(formData.printingPrice)
           : null,
@@ -469,19 +471,34 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                   Basic Information
                 </h4>
                 <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-white/80">
-                      Product Name <RequiredStar />
-                    </label>
-                    <input
-                      required
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      type="text"
-                      placeholder="e.g. Kraft Pouch 250g"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-white/80">
+                        Product Name <RequiredStar />
+                      </label>
+                      <input
+                        required
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        type="text"
+                        placeholder="e.g. Kraft Pouch 250g"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-medium text-white/80">
+                        Serial SKU
+                      </label>
+                      <input
+                        name="sku"
+                        value={formData.sku}
+                        onChange={handleInputChange}
+                        type="text"
+                        placeholder="e.g. KP-250-BRW"
+                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
