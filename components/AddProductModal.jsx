@@ -645,6 +645,9 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       <option value="Silver">Silver</option>
                       <option value="Transparent">Transparent</option>
                       <option value="Gold">Gold</option>
+                      <option value="Red">Red</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Green">Green</option>
                       <option value="Custom">Custom</option>
                     </select>
                   </div>
