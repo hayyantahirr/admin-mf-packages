@@ -25,7 +25,7 @@ export default function ProductManagement() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "products"), orderBy("name", "asc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const productList = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -46,7 +46,8 @@ export default function ProductManagement() {
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.size?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination Logic
@@ -162,7 +163,7 @@ export default function ProductManagement() {
           />
           <input
             type="text"
-            placeholder="Search products by name or category..."
+            placeholder="Search products by name , size or category ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-slate-800 outline-none transition-all focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00]"
