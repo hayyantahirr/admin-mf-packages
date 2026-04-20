@@ -106,6 +106,7 @@ export default function ProductManagement() {
       materialStructure: product.materialStructure
         ? { ...product.materialStructure }
         : {},
+      tieredPrices: product.tieredPrices ? { ...product.tieredPrices } : null,
       extraImages: product.extraImages ? [...product.extraImages] : [],
     };
 
@@ -257,7 +258,20 @@ export default function ProductManagement() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-800">
-                        Rs. {product.price?.toLocaleString() || "0"}
+                        {product.useTieredPricing ? (
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-[#fa1a00] uppercase tracking-widest">
+                              Manual Tiered
+                            </span>
+                            <span>
+                              Rs.{" "}
+                              {product.tieredPrices?.[100]?.toLocaleString() ||
+                                product.tieredPrices?.["100"]?.toLocaleString()}
+                            </span>
+                          </div>
+                        ) : (
+                          `Rs. ${product.price?.toLocaleString() || "0"}`
+                        )}
                       </div>
                       {product.printingPrice && (
                         <div className="text-[10px] text-slate-400">

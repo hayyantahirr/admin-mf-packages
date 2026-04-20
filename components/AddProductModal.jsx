@@ -52,6 +52,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       tea: "",
       flour: "",
     },
+    useTieredPricing: false,
+    tieredPrices: {
+      50: "",
+      100: "",
+      500: "",
+      1000: "",
+    },
   });
 
   const [mainImage, setMainImage] = useState(null); // File object for new uploads
@@ -97,6 +104,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           mixSpices: product.capacitySpecs?.["Mix Spices"] || "",
           tea: product.capacitySpecs?.["Tea"] || "",
           flour: product.capacitySpecs?.["Flour"] || "",
+        },
+        useTieredPricing: product.useTieredPricing || false,
+        tieredPrices: {
+          50: product.tieredPrices?.["50"]?.toString() || "",
+          100: product.tieredPrices?.["100"]?.toString() || "",
+          500: product.tieredPrices?.["500"]?.toString() || "",
+          1000: product.tieredPrices?.["1000"]?.toString() || "",
         },
       });
       setPreviews({
@@ -150,6 +164,13 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           mixSpices: "",
           tea: "",
           flour: "",
+        },
+        useTieredPricing: false,
+        tieredPrices: {
+          50: "",
+          100: "",
+          500: "",
+          1000: "",
         },
       });
       setPreviews({ main: null, gen: null });
@@ -293,7 +314,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     const hasRequiredFields =
       formData.name.trim() !== "" &&
       formData.size.trim() !== "" &&
-      formData.price.trim() !== "" &&
+      (formData.useTieredPricing
+        ? formData.tieredPrices["50"] &&
+          formData.tieredPrices["100"] &&
+          formData.tieredPrices["500"] &&
+          formData.tieredPrices["1000"]
+        : formData.price.trim() !== "") &&
       formData.stockAmount.trim() !== "" &&
       formData.category !== "";
 
@@ -352,7 +378,16 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       const productData = {
         name: formData.name,
         size: formData.size,
-        price: parseFloat(formData.price) || 0,
+        price: formData.useTieredPricing ? 0 : parseFloat(formData.price) || 0,
+        useTieredPricing: formData.useTieredPricing,
+        tieredPrices: formData.useTieredPricing
+          ? {
+              50: parseFloat(formData.tieredPrices["50"]) || 0,
+              100: parseFloat(formData.tieredPrices["100"]) || 0,
+              500: parseFloat(formData.tieredPrices["500"]) || 0,
+              1000: parseFloat(formData.tieredPrices["1000"]) || 0,
+            }
+          : null,
         genDescription: formData.genDescription || "",
         sku: formData.sku || "",
         printingPrice: formData.printingPrice
@@ -542,36 +577,144 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-white/80">
-                        Price (Rs.) <RequiredStar />
+                  <div className="rounded-2xl border border-white/5 bg-white/5 p-6 mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="space-y-1">
+                        <label className="text-sm font-semibold text-white">
+                          Manual Tiered Pricing
+                        </label>
+                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
+                          Override base price with specific quantities
+                        </p>
+                      </div>
+                      <label className="relative inline-flex cursor-pointer items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.useTieredPricing}
+                          onChange={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              useTieredPricing: !prev.useTieredPricing,
+                            }))
+                          }
+                          className="peer sr-only"
+                        />
+                        <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
                       </label>
-                      <input
-                        required
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
-                      />
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-medium text-white/80">
-                        Printing Price (Rs.)
-                      </label>
-                      <input
-                        name="printingPrice"
-                        value={formData.printingPrice}
-                        onChange={handleInputChange}
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
-                      />
-                    </div>
+
+                    {!formData.useTieredPricing ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-white/80">
+                            Base Price (Rs.) <RequiredStar />
+                          </label>
+                          <input
+                            required
+                            name="price"
+                            value={formData.price}
+                            onChange={handleInputChange}
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-white/80">
+                            Printing Price (Rs.)
+                          </label>
+                          <input
+                            name="printingPrice"
+                            value={formData.printingPrice}
+                            onChange={handleInputChange}
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                              Price for 50 PCS <RequiredStar />
+                            </label>
+                            <input
+                              required
+                              name="tieredPrices.50"
+                              value={formData.tieredPrices["50"]}
+                              onChange={handleInputChange}
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                              Price for 100 PCS <RequiredStar />
+                            </label>
+                            <input
+                              required
+                              name="tieredPrices.100"
+                              value={formData.tieredPrices["100"]}
+                              onChange={handleInputChange}
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                              Price for 500 PCS <RequiredStar />
+                            </label>
+                            <input
+                              required
+                              name="tieredPrices.500"
+                              value={formData.tieredPrices["500"]}
+                              onChange={handleInputChange}
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                              Price for 1000 PCS <RequiredStar />
+                            </label>
+                            <input
+                              required
+                              name="tieredPrices.1000"
+                              value={formData.tieredPrices["1000"]}
+                              onChange={handleInputChange}
+                              type="number"
+                              step="0.01"
+                              placeholder="0.00"
+                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-white/80">
+                            Printing Price (Rs.)
+                          </label>
+                          <input
+                            name="printingPrice"
+                            value={formData.printingPrice}
+                            onChange={handleInputChange}
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00] outline-none transition-all placeholder:text-white/20"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

@@ -94,10 +94,17 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                      Base Price
+                      {product.useTieredPricing
+                        ? "Representative Price (1000+)"
+                        : "Base Price"}
                     </p>
                     <p className="text-xl font-black text-white">
-                      Rs. {product.price?.toLocaleString()}
+                      Rs.{" "}
+                      {(product.useTieredPricing
+                        ? product.tieredPrices?.[1000] ||
+                          product.tieredPrices?.["1000"]
+                        : product.price
+                      )?.toLocaleString() || "0"}
                     </p>
                     {product.printingPrice && (
                       <p className="text-[10px] font-bold text-[#00FF88] uppercase mt-1">
@@ -154,6 +161,38 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                   </div>
                 </div>
               </div>
+
+              {product.useTieredPricing && (
+                <div className="rounded-3xl border border-[#fa1a00]/20 bg-[#fa1a00]/5 p-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-[10px] font-black text-[#fa1a00] uppercase tracking-widest">
+                      Manual Pricing Tiers
+                    </h5>
+                    <span className="rounded-full bg-[#fa1a00] px-2 py-0.5 text-[8px] font-black text-white uppercase">
+                      Active
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[50, 100, 500, 1000].map((qty) => (
+                      <div
+                        key={qty}
+                        className="flex flex-col rounded-xl bg-white/5 p-3 border border-white/5"
+                      >
+                        <span className="text-[9px] font-bold text-white/40 uppercase tracking-tight">
+                          {qty} PCS
+                        </span>
+                        <span className="text-lg font-black text-white">
+                          Rs.{" "}
+                          {(
+                            product.tieredPrices?.[qty] ||
+                            product.tieredPrices?.[qty.toString()]
+                          )?.toLocaleString() || "---"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-6 pt-2">
                 {product.genDescription ? (
