@@ -95,7 +95,7 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                   <div>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
                       {product.useTieredPricing
-                        ? "Representative Price (1000+)"
+                        ? "As Low As"
                         : "Base Price"}
                     </p>
                     <p className="text-xl font-black text-white">

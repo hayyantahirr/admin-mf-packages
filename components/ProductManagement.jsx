@@ -259,15 +259,23 @@ export default function ProductManagement() {
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-800">
                         {product.useTieredPricing ? (
-                          <div className="flex flex-col">
+                          <div className="flex flex-col gap-1">
                             <span className="text-[10px] font-black text-[#fa1a00] uppercase tracking-widest">
                               Manual Tiered
                             </span>
-                            <span>
-                              Rs.{" "}
-                              {product.tieredPrices?.[100]?.toLocaleString() ||
-                                product.tieredPrices?.["100"]?.toLocaleString()}
-                            </span>
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px]">
+                              {[50, 100, 500, 1000].map((qty) => (
+                                <div key={qty} className="flex justify-between gap-1 border-b border-slate-100 last:border-0 pb-0.5">
+                                  <span className="text-slate-400 font-bold">{qty}:</span>
+                                  <span className="text-slate-700">
+                                    {(
+                                      product.tieredPrices?.[qty] ||
+                                      product.tieredPrices?.[qty.toString()]
+                                    )?.toLocaleString() || "0"}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         ) : (
                           `Rs. ${product.price?.toLocaleString() || "0"}`
