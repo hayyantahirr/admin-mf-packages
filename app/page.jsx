@@ -8,6 +8,7 @@ import Blogs from "@/components/Blogs";
 import Sidebar from "@/components/Sidebar";
 import OrdersDashboard from "@/components/OrdersDashboard";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotificationManager from "@/components/NotificationManager";
 import { useState } from "react";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
 
   return (
     <ProtectedRoute>
+      <NotificationManager />
       <div className="flex h-screen bg-[#F8FAFC]">
         <Sidebar
           activeTab={activeTab}
@@ -27,7 +29,7 @@ export default function Home() {
           <Header setIsOpen={setIsSidebarOpen} />
           <main className="flex-1 overflow-y-auto p-4 md:p-8">
             <div className="mx-auto max-w-7xl">
-              {activeTab === "overview" && <Overview />}
+              {activeTab === "overview" && <Overview onNavigate={setActiveTab} />}
               {activeTab === "products" && <ProductManagement />}
               {activeTab === "blogs" && <Blogs />}
               {activeTab === "orders" && <OrdersDashboard />}

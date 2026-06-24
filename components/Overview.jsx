@@ -30,7 +30,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function Overview() {
+export default function Overview({ onNavigate }) {
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalSales: 0,
@@ -53,7 +53,7 @@ export default function Overview() {
     // 2. Fetch Pending Orders Count
     const qPending = query(
       collection(db, "orders"),
-      where("status", "==", "pending"),
+      where("status", "==", "Pending"),
     );
     const unsubscribePending = onSnapshot(qPending, (snapshot) => {
       setStats((prev) => ({ ...prev, pendingOrders: snapshot.size }));
@@ -62,10 +62,10 @@ export default function Overview() {
     // 3. Fetch Unseen Inquiries Count
     const qUnseen = query(
       collection(db, "contacts"),
-      where("isSeen", "==", false),
     );
     const unsubscribeUnseen = onSnapshot(qUnseen, (snapshot) => {
-      setStats((prev) => ({ ...prev, unseenInquiries: snapshot.size }));
+      const unseenCount = snapshot.docs.filter((doc) => doc.data().isSeen !== true).length;
+      setStats((prev) => ({ ...prev, unseenInquiries: unseenCount }));
     });
 
     // 4. Fetch All Orders for Total Sales and Chart
@@ -148,6 +148,7 @@ export default function Overview() {
       icon: <ShoppingBag className="h-6 w-6 text-[#fa1a00]" />,
       color: "bg-[#fa1a00]/10 border-[#fa1a00]/20",
       textColor: "text-[#fa1a00]",
+      tabId: "orders",
     },
     {
       title: "Total Products",
@@ -162,6 +163,7 @@ export default function Overview() {
       icon: <Mail className="h-6 w-6 text-amber-400" />,
       color: "bg-amber-500/10 border-amber-500/20",
       textColor: "text-amber-400",
+      tabId: "inquiries",
     },
   ];
 
@@ -192,7 +194,8 @@ export default function Overview() {
         {statCards.map((stat, index) => (
           <div
             key={index}
-            className={`group relative overflow-hidden rounded-3xl border ${stat.color} bg-white p-6 shadow-sm transition-all hover:shadow-xl`}
+            onClick={() => stat.tabId && onNavigate && onNavigate(stat.tabId)}
+            className={`group relative overflow-hidden rounded-3xl border ${stat.color} bg-white p-6 shadow-sm transition-all hover:shadow-xl ${stat.tabId && onNavigate ? "cursor-pointer hover:-translate-y-1" : ""}`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -205,10 +208,15 @@ export default function Overview() {
               </div>
               <div className={`rounded-2xl p-3 ${stat.color}`}>{stat.icon}</div>
             </div>
-            <div className="mt-6 flex items-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400">
               <span className={`flex items-center gap-1 ${stat.textColor}`}>
                 Live Feed <ArrowUpRight size={14} />
               </span>
+              {stat.tabId && onNavigate && (
+                <span className="flex items-center gap-1 text-slate-300 group-hover:text-slate-500 transition-colors">
+                  View All <ArrowUpRight size={12} />
+                </span>
+              )}
             </div>
           </div>
         ))}

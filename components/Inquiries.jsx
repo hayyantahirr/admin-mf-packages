@@ -80,12 +80,13 @@ export default function Inquiries() {
     }
   };
 
-  const handleMarkAsSeen = async (e, inquiryId) => {
-    e.stopPropagation();
+  const handleStatusChange = async (inquiryId, status) => {
     try {
-      await updateDoc(doc(db, "contacts", inquiryId), { isSeen: true });
+      await updateDoc(doc(db, "contacts", inquiryId), {
+        isSeen: status === "seen",
+      });
     } catch (err) {
-      console.error("Error marking inquiry as seen:", err);
+      console.error("Error updating inquiry status:", err);
     }
   };
 
@@ -233,26 +234,29 @@ export default function Inquiries() {
                 </div>
 
                 <div className="mt-4 flex shrink-0 flex-col gap-3 sm:mt-0 sm:items-end">
-                  <div className="flex items-center gap-2">
-                    {inquiry.isSeen === false && (
-                      <span className="rounded-md bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {inquiry.isSeen !== true && (
+                      <span className="rounded-md bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white animate-pulse">
                         New
                       </span>
                     )}
-                    <div className="flex gap-2">
-                      {inquiry.isSeen === false && (
-                        <button
-                          onClick={(e) => handleMarkAsSeen(e, inquiry.id)}
-                          title="Mark as Seen"
-                          className="rounded-lg bg-emerald-50 p-1.5 text-emerald-600 transition-colors hover:bg-emerald-100"
-                        >
-                          <Check size={16} />
-                        </button>
-                      )}
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={inquiry.isSeen === true ? "seen" : "unseen"}
+                        onChange={(e) => handleStatusChange(inquiry.id, e.target.value)}
+                        className={`rounded-lg border px-2.5 py-1.5 text-xs font-black uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-[#fa1a00] transition-colors cursor-pointer ${
+                          inquiry.isSeen === true
+                            ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/70"
+                            : "bg-red-50 border-red-200 text-[#fa1a00] hover:bg-red-100/70"
+                        }`}
+                      >
+                        <option value="unseen">Unseen</option>
+                        <option value="seen">Seen</option>
+                      </select>
                       <button
                         onClick={(e) => handleDelete(e, inquiry.id, inquiry.name)}
                         title="Delete Inquiry"
-                        className="rounded-lg bg-red-50 p-1.5 text-red-600 transition-colors hover:bg-red-100"
+                        className="rounded-lg bg-red-50 p-1.5 text-red-600 transition-colors hover:bg-[#fa1a00]/10 hover:text-[#fa1a00]"
                       >
                         <Trash2 size={16} />
                       </button>

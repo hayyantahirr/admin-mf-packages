@@ -21,18 +21,18 @@ export default function Sidebar({
     // ... items from original 17-39 ...
     const ordersQuery = query(
       collection(db, "orders"),
-      where("status", "==", "pending")
+      where("status", "==", "Pending")
     );
     const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
       setPendingOrders(snapshot.size);
     });
 
     const inquiriesQuery = query(
-      collection(db, "contacts"),
-      where("isSeen", "==", false)
+      collection(db, "contacts")
     );
     const unsubscribeInquiries = onSnapshot(inquiriesQuery, (snapshot) => {
-      setUnseenInquiries(snapshot.size);
+      const unseenCount = snapshot.docs.filter((doc) => doc.data().isSeen !== true).length;
+      setUnseenInquiries(unseenCount);
     });
 
     return () => {
