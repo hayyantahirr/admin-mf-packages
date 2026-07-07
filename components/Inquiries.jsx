@@ -161,10 +161,10 @@ export default function Inquiries() {
               <div className="flex flex-col items-center gap-2">
                 <MessageSquare size={40} className="text-slate-200" />
                 <span>
-                  No inquiries found in collection "contacts".
+                  No inquiries found in collection &quot;contacts&quot;.
                   <br />
                   <span className="text-xs">
-                    Check if you should use singular "contact" instead.
+                    Check if you should use singular &quot;contact&quot; instead.
                   </span>
                 </span>
               </div>

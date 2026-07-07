@@ -38,10 +38,7 @@ export default function ProductManagement() {
     return () => unsubscribe();
   }, []);
 
-  // Reset to first page when search term changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
+
 
   const filteredProducts = products.filter(
     (product) =>
@@ -166,7 +163,10 @@ export default function ProductManagement() {
             type="text"
             placeholder="Search products by name , size or category ..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-slate-800 outline-none transition-all focus:border-[#fa1a00] focus:ring-1 focus:ring-[#fa1a00]"
           />
         </div>

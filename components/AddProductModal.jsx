@@ -573,6 +573,18 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         <option value="PVC shrink capsules">
                           PVC shrink capsules
                         </option>
+                        <option value="Aseptic packaging">
+                          Aseptic packaging
+                        </option>
+                        <option value="Bakery packaging">
+                          Bakery packaging
+                        </option>
+                        <option value="Vacuum pouches">
+                          Vacuum pouches
+                        </option>
+                        <option value="Coffee filters">
+                          Coffee filters
+                        </option>
                       </select>
                     </div>
                   </div>
