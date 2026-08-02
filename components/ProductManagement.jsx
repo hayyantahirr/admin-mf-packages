@@ -264,17 +264,16 @@ export default function ProductManagement() {
                               Manual Tiered
                             </span>
                             <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px]">
-                              {[50, 100, 500, 1000].map((qty) => (
-                                <div key={qty} className="flex justify-between gap-1 border-b border-slate-100 last:border-0 pb-0.5">
-                                  <span className="text-slate-400 font-bold">{qty}:</span>
-                                  <span className="text-slate-700">
-                                    {(
-                                      product.tieredPrices?.[qty] ||
-                                      product.tieredPrices?.[qty.toString()]
-                                    )?.toLocaleString() || "0"}
-                                  </span>
-                                </div>
-                              ))}
+                              {Object.entries(product.tieredPrices || {})
+                                .sort(([a], [b]) => Number(a) - Number(b))
+                                .map(([qty, price]) => (
+                                  <div key={qty} className="flex justify-between gap-1 border-b border-slate-100 last:border-0 pb-0.5">
+                                    <span className="text-slate-400 font-bold">{qty}:</span>
+                                    <span className="text-slate-700">
+                                      {Number(price)?.toLocaleString() || "0"}
+                                    </span>
+                                  </div>
+                                ))}
                             </div>
                           </div>
                         ) : (

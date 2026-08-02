@@ -100,9 +100,8 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                     </p>
                     <p className="text-xl font-black text-white">
                       Rs.{" "}
-                      {(product.useTieredPricing
-                        ? product.tieredPrices?.[1000] ||
-                          product.tieredPrices?.["1000"]
+                      {(product.useTieredPricing && product.tieredPrices
+                        ? Object.values(product.tieredPrices).filter((v) => v !== null && v !== undefined && !isNaN(v)).sort((a, b) => Number(a) - Number(b))[0] || 0
                         : product.price
                       )?.toLocaleString() || "0"}
                     </p>
@@ -173,23 +172,21 @@ export default function ProductDetailsModal({ product, isOpen, onClose }) {
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    {[50, 100, 500, 1000].map((qty) => (
-                      <div
-                        key={qty}
-                        className="flex flex-col rounded-xl bg-white/5 p-3 border border-white/5"
-                      >
-                        <span className="text-[9px] font-bold text-white/40 uppercase tracking-tight">
-                          {qty} PCS
-                        </span>
-                        <span className="text-lg font-black text-white">
-                          Rs.{" "}
-                          {(
-                            product.tieredPrices?.[qty] ||
-                            product.tieredPrices?.[qty.toString()]
-                          )?.toLocaleString() || "---"}
-                        </span>
-                      </div>
-                    ))}
+                    {Object.entries(product.tieredPrices || {})
+                      .sort(([a], [b]) => Number(a) - Number(b))
+                      .map(([qty, price]) => (
+                        <div
+                          key={qty}
+                          className="flex flex-col rounded-xl bg-white/5 p-3 border border-white/5"
+                        >
+                          <span className="text-[9px] font-bold text-white/40 uppercase tracking-tight">
+                            {qty} PCS
+                          </span>
+                          <span className="text-lg font-black text-white">
+                            Rs. {Number(price)?.toLocaleString() || "---"}
+                          </span>
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}

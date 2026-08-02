@@ -53,12 +53,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
       flour: "",
     },
     useTieredPricing: false,
-    tieredPrices: {
-      50: "",
-      100: "",
-      500: "",
-      1000: "",
-    },
+    tieredTiers: [
+      { qty: "50", price: "" },
+      { qty: "100", price: "" },
+      { qty: "500", price: "" },
+      { qty: "1000", price: "" },
+    ],
   });
 
   const [mainImage, setMainImage] = useState(null); // File object for new uploads
@@ -106,12 +106,20 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           flour: product.capacitySpecs?.["Flour"] || "",
         },
         useTieredPricing: product.useTieredPricing || false,
-        tieredPrices: {
-          50: product.tieredPrices?.["50"]?.toString() || "",
-          100: product.tieredPrices?.["100"]?.toString() || "",
-          500: product.tieredPrices?.["500"]?.toString() || "",
-          1000: product.tieredPrices?.["1000"]?.toString() || "",
-        },
+        tieredTiers:
+          product.tieredPrices && Object.keys(product.tieredPrices).length > 0
+            ? Object.entries(product.tieredPrices)
+                .sort(([a], [b]) => Number(a) - Number(b))
+                .map(([qty, price]) => ({
+                  qty: qty.toString(),
+                  price: price !== undefined && price !== null ? price.toString() : "",
+                }))
+            : [
+                { qty: "50", price: "" },
+                { qty: "100", price: "" },
+                { qty: "500", price: "" },
+                { qty: "1000", price: "" },
+              ],
       });
       setPreviews({
         main: product.mainImage || null,
@@ -166,12 +174,12 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
           flour: "",
         },
         useTieredPricing: false,
-        tieredPrices: {
-          50: "",
-          100: "",
-          500: "",
-          1000: "",
-        },
+        tieredTiers: [
+          { qty: "50", price: "" },
+          { qty: "100", price: "" },
+          { qty: "500", price: "" },
+          { qty: "1000", price: "" },
+        ],
       });
       setPreviews({ main: null, gen: null });
       setExtraImagesState([]);
@@ -309,17 +317,46 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
     setFormData((prev) => ({ ...prev, showCapacity: !prev.showCapacity }));
   };
 
+  const handleTierChange = (index, field, value) => {
+    setFormData((prev) => {
+      const updatedTiers = [...prev.tieredTiers];
+      updatedTiers[index] = {
+        ...updatedTiers[index],
+        [field]: value,
+      };
+      return { ...prev, tieredTiers: updatedTiers };
+    });
+  };
+
+  const handleAddTier = () => {
+    setFormData((prev) => ({
+      ...prev,
+      tieredTiers: [...prev.tieredTiers, { qty: "", price: "" }],
+    }));
+  };
+
+  const handleRemoveTier = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      tieredTiers: prev.tieredTiers.filter((_, i) => i !== index),
+    }));
+  };
+
   const isFormValid = () => {
     const hasMaterial = materialRows.some((row) => row.key.trim() !== "");
+    const hasValidTiers = formData.useTieredPricing
+      ? formData.tieredTiers.length > 0 &&
+        formData.tieredTiers.every(
+          (t) =>
+            t.qty.toString().trim() !== "" &&
+            t.price.toString().trim() !== ""
+        )
+      : formData.price.trim() !== "";
+
     const hasRequiredFields =
       formData.name.trim() !== "" &&
       formData.size.trim() !== "" &&
-      (formData.useTieredPricing
-        ? formData.tieredPrices["50"] &&
-          formData.tieredPrices["100"] &&
-          formData.tieredPrices["500"] &&
-          formData.tieredPrices["1000"]
-        : formData.price.trim() !== "") &&
+      hasValidTiers &&
       formData.stockAmount.trim() !== "" &&
       formData.category !== "";
 
@@ -375,19 +412,25 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
         }),
       );
 
+      const tieredPricesObj = {};
+      if (formData.useTieredPricing) {
+        formData.tieredTiers.forEach((tier) => {
+          if (
+            tier.qty.toString().trim() !== "" &&
+            tier.price.toString().trim() !== ""
+          ) {
+            tieredPricesObj[tier.qty.toString().trim()] =
+              parseFloat(tier.price) || 0;
+          }
+        });
+      }
+
       const productData = {
         name: formData.name,
         size: formData.size,
         price: formData.useTieredPricing ? 0 : parseFloat(formData.price) || 0,
         useTieredPricing: formData.useTieredPricing,
-        tieredPrices: formData.useTieredPricing
-          ? {
-              50: parseFloat(formData.tieredPrices["50"]) || 0,
-              100: parseFloat(formData.tieredPrices["100"]) || 0,
-              500: parseFloat(formData.tieredPrices["500"]) || 0,
-              1000: parseFloat(formData.tieredPrices["1000"]) || 0,
-            }
-          : null,
+        tieredPrices: formData.useTieredPricing ? tieredPricesObj : null,
         genDescription: formData.genDescription || "",
         sku: formData.sku || "",
         printingPrice: formData.printingPrice
@@ -611,7 +654,7 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                           }
                           className="peer sr-only"
                         />
-                        <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
+                        <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left- after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
                       </label>
                     </div>
 
@@ -649,67 +692,66 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                              Price for 50 PCS <RequiredStar />
-                            </label>
-                            <input
-                              required
-                              name="tieredPrices.50"
-                              value={formData.tieredPrices["50"]}
-                              onChange={handleInputChange}
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
-                            />
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-xs font-bold text-white/60 uppercase tracking-wider px-1">
+                            <span>Quantity & Price Tiers</span>
                           </div>
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                              Price for 100 PCS <RequiredStar />
-                            </label>
-                            <input
-                              required
-                              name="tieredPrices.100"
-                              value={formData.tieredPrices["100"]}
-                              onChange={handleInputChange}
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                              Price for 500 PCS <RequiredStar />
-                            </label>
-                            <input
-                              required
-                              name="tieredPrices.500"
-                              value={formData.tieredPrices["500"]}
-                              onChange={handleInputChange}
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                              Price for 1000 PCS <RequiredStar />
-                            </label>
-                            <input
-                              required
-                              name="tieredPrices.1000"
-                              value={formData.tieredPrices["1000"]}
-                              onChange={handleInputChange}
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-4 py-2.5 text-white focus:border-[#fa1a00] outline-none transition-all"
-                            />
-                          </div>
+                          {formData.tieredTiers.map((tier, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10"
+                            >
+                              <div className="flex-1 space-y-1">
+                                <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block">
+                                  Quantity (PCS) <RequiredStar />
+                                </label>
+                                <input
+                                  required
+                                  type="number"
+                                  min="1"
+                                  placeholder="e.g. 50"
+                                  value={tier.qty}
+                                  onChange={(e) =>
+                                    handleTierChange(index, "qty", e.target.value)
+                                  }
+                                  className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-3 py-2 text-white focus:border-[#fa1a00] outline-none text-sm transition-all"
+                                />
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest block">
+                                  Price (Rs.) <RequiredStar />
+                                </label>
+                                <input
+                                  required
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="0.00"
+                                  value={tier.price}
+                                  onChange={(e) =>
+                                    handleTierChange(index, "price", e.target.value)
+                                  }
+                                  className="w-full rounded-xl border border-[#fa1a00]/30 bg-[#fa1a00]/5 px-3 py-2 text-white focus:border-[#fa1a00] outline-none text-sm transition-all"
+                                />
+                              </div>
+                              {formData.tieredTiers.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveTier(index)}
+                                  className="mt-4 p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-white/10 transition-colors"
+                                  title="Remove Tier"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={handleAddTier}
+                            className="flex items-center gap-2 text-xs font-semibold text-[#fa1a00] hover:text-white transition-colors pt-1"
+                          >
+                            <Plus size={14} /> Add Tier Option
+                          </button>
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-white/80">
@@ -921,8 +963,8 @@ export default function AddProductModal({ isOpen, onClose, product = null }) {
                         onChange={handleToggleCapacity}
                         className="peer sr-only"
                       />
-                      <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
-                      <span className="ml-3 text-xs font-bold text-white/40 uppercase">
+                      <div className="peer h-6 w-11 rounded-full bg-white/10 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-white/20 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#fa1a00] peer-checked:after:translate-x-full peer-checked:after:border-white focus:outline-none" />
+0.5                      <span className="ml-3 text-xs font-bold text-white/40 uppercase">
                         {formData.showCapacity ? "Included" : "Excluded"}
                       </span>
                     </label>
